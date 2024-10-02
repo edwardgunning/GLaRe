@@ -1,10 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# GLarE
-
-![](inst/figures/hex.png)
-
+<center>
+<img src="inst/figures/hex.png" alt="hex" width="200"/>
+</center>
 <!-- badges: start -->
 <!-- badges: end -->
 

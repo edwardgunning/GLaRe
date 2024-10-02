@@ -13,9 +13,8 @@ knitr::opts_chunk$set(
 )
 ```
 
-# GLarE
 
-![](inst/figures/hex.png)
+<center> <img src="inst/figures/hex.png" alt="hex" width="200"/> </center>
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -41,7 +40,7 @@ library(GLarE)
 
 We use the Phenoeme dataset for this example (see [here](https://www.math.univ-toulouse.fr/~ferraty/SOFTWARES/NPFDA/)).
 
-```{r, fig.width=7, fig.asp=0.75, message=FALSE, warning=FALSE}
+```{r, fig.width=5, fig.asp=0.75, message=FALSE, warning=FALSE}
 # Phoenome dataset:
 PH <- readr::read_table(file = "https://www.math.univ-toulouse.fr/~ferraty/SOFTWARES/NPFDA/npfda-phoneme.dat", col_names = FALSE)
 PH <- as.matrix(PH)[, 1:150]
