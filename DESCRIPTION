@@ -1,0 +1,15 @@
+Package: GLarE
+Type: Package
+Title: A Graphical Latent Feature Representation Tool
+Version: 0.1.0
+Authors@R: c(
+    person("Edward", "Gunning", email = "edward.gunning@pennmedicine.upenn.edu", role = c("aut")),
+    person("Emma", "Zohner", email = "etraore@gmail.com", role = c("aut", "cre")))
+Maintainer: Edward Gunning <edward.gunning@pennmedicine.upenn.edu>
+Description: A Graphical Latent Feature Representation Tool
+    This package allows a user to assess losslessness of latent feature representations for complex data objects based on out-of-sample performance. 
+    The package provides a function for computing losslessness and a Shiny Graphical User Interface (GUI) for visualising the results.  
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.1
