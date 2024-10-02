@@ -85,15 +85,16 @@ GLaRe <- function(
     cvqlines = .5,
     ae_args = list(),
     cutoffcriterion = 0.5,
-    cutoffvalue = 0.9) {
+    cutoffvalue = 0.9,
+    verbose = TRUE) {
 
 
   # Principal Components Analysis -------------------------------------------
   if (learn == "pca") {
-    out <- flf_basissel_pca(mat = mat, kf = kf, lim = lim, incr = incr)
+    out <- flf_basissel_pca(mat = mat, kf = kf, lim = lim, incr = incr, verbose = verbose)
   }
   else if (learn == "autoencoder") {
-    out <- flf_basissel_ae(mat = mat, kf = kf, lim = lim, incr = incr, ae_args = ae_args)
+    out <- flf_basissel_ae(mat = mat, kf = kf, lim = lim, incr = incr, ae_args = ae_args, verbose = verbose)
   }
     #   out <- flf_basissel_ae(mat, learn_ae, kf, center, scale, ...)
   # else if (learn == "dwt") {

@@ -34,7 +34,7 @@ learn_pca <- function(Y) {
 #' @export
 #'
 #' @examples
-flf_basissel_pca <- function(mat, kf, lim = min(ncol(mat) - 1, nrow(mat) - 1), incr = 1, center = TRUE) {
+flf_basissel_pca <- function(mat, kf, lim = min(ncol(mat) - 1, nrow(mat) - 1), incr = 1, center = TRUE, verbose = TRUE) {
   set.seed(123)
   #* SET UP: MATRIX SIZE AND FUNCTIONS
   mat <- as.matrix(mat)
@@ -67,15 +67,15 @@ flf_basissel_pca <- function(mat, kf, lim = min(ncol(mat) - 1, nrow(mat) - 1), i
   corM_t <- rep(0, q)
   RESS <- rep(0, q)
 
-  print("====== Training ======")
+  if(verbose) print("====== Training ======")
   for (j in 1:q) { # q is the maximum number of eigenvectors
-      print(paste("= Latent Dim. =", breaks[j]))
+      if(verbose) print(paste("= Latent Dim. =", breaks[j]))
       proj_t <- Transform(Extract(mat, breaks[j]), breaks[j])
       corM_t[j] <- cor(c(proj_t), c(mat))^2
     }
 
   #* CROSS VALIDATION
-  print(paste0("====== Performing ", kf, "-fold CV ======="))
+  if(verbose) print(paste0("====== Performing ", kf, "-fold CV ======="))
 
   n_cv <- floor(n - n/kf)
 
@@ -94,7 +94,7 @@ flf_basissel_pca <- function(mat, kf, lim = min(ncol(mat) - 1, nrow(mat) - 1), i
   folds <- cut(seq(1, n), breaks = kf, labels = FALSE)
 
   for (i in 1:kf) {
-    print(paste("==== Fold ", i, "===="))
+    if(verbose) print(paste("==== Fold ", i, "===="))
     kind <- which(folds == i, arr.ind = TRUE)
     mati <- mat[kind, ]
     LearnOut <- learn_pca(mat[-kind, ])
@@ -102,7 +102,7 @@ flf_basissel_pca <- function(mat, kf, lim = min(ncol(mat) - 1, nrow(mat) - 1), i
     Transformv <- LearnOut[["Transform"]]
 
     for (j in 1:r) {
-      print(paste("= Latent Dim. =", breaks[j]))
+      if(verbose) print(paste("= Latent Dim. =", breaks[j]))
       proj_v[kind, , j] <- Transformv(Extractv(mati, breaks[j]), breaks[j])
       proji <- as.matrix(if (NROW(proj_v[kind, , j]) > NCOL(proj_v[kind, , j]) && (n < p || NROW(proj_v[kind, , j]) == p)) {
         t(proj_v[kind, , j])

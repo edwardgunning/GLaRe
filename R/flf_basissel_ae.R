@@ -65,7 +65,7 @@ learn_ae <- function(Y, k, ae_args) {
 #' @export
 #'
 #' @examples
-flf_basissel_ae <- function(mat, kf, lim = lim, incr = incr, ae_args = list()) { # check default for breaks
+flf_basissel_ae <- function(mat, kf, lim = lim, incr = incr, ae_args = list(), verbose = TRUE) { # check default for breaks
 
   #* SET UP: MATRIX SIZE AND FUNCTIONS
   n <- nrow(mat)
@@ -80,9 +80,9 @@ flf_basissel_ae <- function(mat, kf, lim = lim, incr = incr, ae_args = list()) {
   RESS <- rep(0, q)
   mse <- rep(0, q)
 
-  print("====== Training ======")
+  if(verbose) print("====== Training ======")
   for (j in 1:q) {
-    print(paste("= Latent Dim. =", j))
+    if(verbose) print(paste("= Latent Dim. =", j))
     learnout_j <- learn_ae(Y = mat, k = breaks[j], ae_args = ae_args)
     Extract_j <- learnout_j[["Extract"]]
     Transform_j <- learnout_j[["Transform"]]
@@ -91,7 +91,7 @@ flf_basissel_ae <- function(mat, kf, lim = lim, incr = incr, ae_args = list()) {
   }
 
   #* CROSS VALIDATION
-  print(paste0("====== Performing ", kf, "-fold CV ======="))
+  if(verbose) print(paste0("====== Performing ", kf, "-fold CV ======="))
   proj_v <- array(0, c(n, p))
   # r <- ifelse(n < p, max(floor(q-q/kf), 2), q)
   # r <- ifelse(r<10, r, 10)
@@ -107,12 +107,12 @@ flf_basissel_ae <- function(mat, kf, lim = lim, incr = incr, ae_args = list()) {
   folds <- cut(seq(1, n), breaks = kf, labels = FALSE)
 
   for (i in 1:kf) {
-    print(paste("==== Fold ", i, "===="))
+    if(verbose) print(paste("==== Fold ", i, "===="))
     kind <- which(folds == i, arr.ind = TRUE)
     mati <- mat[kind, ]
 
     for (j in 1:r) {
-      print(paste("= Latent Dim. =", j))
+      if(verbose) print(paste("= Latent Dim. =", j))
       learnout_v_j <- learn_ae(mat[-kind, ], k = breaks[j], ae_args = ae_args)
       Extract <- learnout_v_j[["Extract"]]
       Transform <- learnout_v_j[["Transform"]]

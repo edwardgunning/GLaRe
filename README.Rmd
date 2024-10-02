@@ -39,7 +39,7 @@ library(GLarE)
 
 We use the Phenoeme dataset for this example (see [here](https://www.math.univ-toulouse.fr/~ferraty/SOFTWARES/NPFDA/)).
 
-```{r}
+```{r, fig.width=7, fig.asp=0.75, message=FALSE, warning=FALSE}
 # Phoenome dataset:
 PH <- readr::read_table(file = "https://www.math.univ-toulouse.fr/~ferraty/SOFTWARES/NPFDA/npfda-phoneme.dat", col_names = FALSE)
 PH <- as.matrix(PH)[, 1:150]
@@ -49,9 +49,9 @@ matplot(t(PH)[, sample(1:nrow(PH), size = 20)], type = "l", xlab = "Freq.", ylab
 
 We look at the representation given by PCA (left) and autoencoder (right)
 
-```{r}
+```{r, fig.asp = 0.5}
 # run GLaRe
-par(mfrow = c(1, 2)) # side-by-side plots
+par(mfrow = c(1, 2), cex = 0.75) # side-by-side plots
 
 ## PCA:
 test_glare <- GLaRe(
@@ -62,8 +62,9 @@ test_glare <- GLaRe(
   cvqlines = 0.5,
   cutoffcriterion = 0.5,
   cutoffvalue = 0.9,
-  incr = 5,
-  lim = 50)
+  incr = 8,
+  lim = 80,
+  verbose = FALSE)
 
 ## autoencoder
 test_glare <- GLaRe(
@@ -74,9 +75,10 @@ test_glare <- GLaRe(
   cvqlines = 0.5,
   cutoffcriterion = 0.5,
   cutoffvalue = 0.9,
-  incr = 5,
-  lim = 50,
-  ae_args = list(link_fun = "linear", epoch = 50))
+  incr = 8,
+  lim = 80,
+  ae_args = list(link_fun = "linear", epoch = 50),
+  verbose = FALSE)
 ```
 
 
