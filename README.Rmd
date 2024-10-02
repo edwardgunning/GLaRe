@@ -15,6 +15,8 @@ knitr::opts_chunk$set(
 
 # GLarE
 
+![](inst/figures/hex.png)
+
 <!-- badges: start -->
 <!-- badges: end -->
 

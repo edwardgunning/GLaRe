@@ -3,6 +3,8 @@
 
 # GLarE
 
+![](inst/figures/hex.png)
+
 <!-- badges: start -->
 <!-- badges: end -->
 
