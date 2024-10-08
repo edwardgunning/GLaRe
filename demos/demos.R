@@ -20,7 +20,7 @@ DTI_pca <- GLaRe(
 
 DTI_ae <- GLaRe(
   mat = DTI,
-  learn = "autoencoder",
+  learn = "ae",
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
@@ -74,7 +74,7 @@ test_glare <- GLaRe(
 
 test_glare <- GLaRe(
   mat = DTI,
-  learn = "autoencoder",
+  learn = "ae",
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,

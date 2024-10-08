@@ -16,7 +16,7 @@ transform_correlation_output <- function(out_basissel, cvqlines) {
 
 
 
-summary_correlation_plot <- function(out_basisel, cvqlines, r, q, breaks) {
+summary_correlation_plot <- function(out_basisel, cvqlines, r, q, breaks, method_name, qc, cutoffvalue) {
   correlation_df <- transform_correlation_output(out_basisel, cvqlines)
   plot(
     x = breaks,
@@ -30,7 +30,7 @@ summary_correlation_plot <- function(out_basisel, cvqlines, r, q, breaks) {
     ylab = expression(paste("Squared Correlation (", R^2, ")", sep = "")),
     xlim = range(breaks),
     ylim = c(0, 1),
-    main = paste("Latent Feature Representation \n Performance Summaries")
+    main = paste("Latent Feature Representation \n Summary:", method_name)
   )
   lines(x = breaks[1:r], correlation_df[, "minsqcor_cv"], col = "royalblue", lwd = 2, type = "b", pch = 20)
   lines(x = breaks[1:r], correlation_df[, "meansqcor_cv"], col = "goldenrod", lwd = 2, type = "b", pch = 20)
@@ -40,6 +40,13 @@ summary_correlation_plot <- function(out_basisel, cvqlines, r, q, breaks) {
   } else if (cvqlines != 0.5) {
     lines(x = breaks[1:r], correlation_df[, "qchoice_cv"], col = "purple", lwd = 2, type = "b", pch = 20)
   }
+
+  if(!is.na(qc)) {
+    abline(v = qc, lty = 2, col = "grey")
+    abline(h = cutoffvalue, lty = 2, col = "grey")
+    axis(side = 1, at = c(qc), labels = paste0("qc = ", qc), col = "darkgrey",font = 4,lwd = 3, padj = 1.2)
+  }
+
 
   legend("bottomright",
     legend = c(
@@ -80,6 +87,7 @@ GLaRe <- function(
     lim = min(ncol(mat) - 1, nrow(mat) - 1),
     incr = 1,
     learn = "pca",
+    method_name = toupper(learn),
     kf = 5,
     sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
     cvqlines = .5,
@@ -92,7 +100,7 @@ GLaRe <- function(
   # Principal Components Analysis -------------------------------------------
   if (learn == "pca") {
     out <- flf_basissel_pca(mat = mat, kf = kf, lim = lim, incr = incr, verbose = verbose)
-  } else if (learn == "autoencoder") {
+  } else if (learn == "ae") {
     out <- flf_basissel_ae(mat = mat, kf = kf, lim = lim, incr = incr, ae_args = ae_args, verbose = verbose)
   } else if (learn == "dwt") {
     out <- flf_basissel_dwt(mat = mat, kf = kf, lim = lim, incr = incr, verbose = verbose)
@@ -101,16 +109,11 @@ GLaRe <- function(
  # else {
  #  #   out <- flf_basissel_user(mat, learn_user, kf, center, scale, ...)
  #  # }
-
-
   n <- nrow(mat)
   p <- ncol(mat)
   q <- out[["q"]]
   r <- out[["r"]]
   breaks <- out[["breaks"]]
-
-  # Loss-lessness (Scree) Plot:  ---------------------------------------------
-  summary_correlation_plot(out_basisel = out, cvqlines = cvqlines, r = r, q = q, breaks = breaks)
 
 
   # Qualifying Criterion and Add to plot: -----------------------------------
@@ -121,11 +124,10 @@ GLaRe <- function(
   } else {
     index <- min(which(cutoff_criterion_quantiles >= cutoffvalue))
     qc <- breaks[index]
-    abline(v = qc, lty = 2, col = "grey")
-    abline(h = cutoffvalue, lty = 2, col = "grey")
-    axis(side = 1, at = c(qc), labels = paste0("qc = ", qc), col = "darkgrey",font = 4,lwd = 3, padj = 1.2)
   }
 
+  # Loss-lessness (Scree) Plot:  ---------------------------------------------
+  summary_correlation_plot(out_basisel = out, cvqlines = cvqlines, r = r, q = q, breaks = breaks, method_name = method_name, qc = qc, cutoffvalue = cutoffvalue)
 
 
   # Heatmap: ----------------------------------------------------------------

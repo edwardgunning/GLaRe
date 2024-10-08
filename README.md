@@ -39,7 +39,8 @@ We use the Phenoeme dataset for this example (see
 
 ``` r
 # Phoenome dataset:
-PH <- readr::read_table(file = "https://www.math.univ-toulouse.fr/~ferraty/SOFTWARES/NPFDA/npfda-phoneme.dat", col_names = FALSE)
+PH_path <- "https://www.math.univ-toulouse.fr/~ferraty/SOFTWARES/NPFDA/npfda-phoneme.dat"
+PH <- readr::read_table(file = PH_path, col_names = FALSE)
 PH <- as.matrix(PH)[, 1:150]
 par(mfrow = c(1, 1))
 matplot(t(PH)[, sample(1:nrow(PH), size = 20)], type = "l", xlab = "Freq.", ylab = "Log-periodogram")
@@ -69,7 +70,7 @@ ph_pca <- GLaRe(
 ## autoencoder
 ph_ae <- GLaRe(
   mat = PH,
-  learn = "autoencoder",
+  learn = "ae",
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
@@ -79,8 +80,8 @@ ph_ae <- GLaRe(
   lim = 120,
   ae_args = list(link_fun = "linear", epoch = 50),
   verbose = FALSE)
-#> Warning in GLaRe(mat = PH, learn = "autoencoder", kf = 5, sqcorrel =
-#> c("trainmean", : No qualifying criterion found, try adjusting parameters.
+#> Warning in GLaRe(mat = PH, learn = "ae", kf = 5, sqcorrel = c("trainmean", : No
+#> qualifying criterion found, try adjusting parameters.
 ```
 
 ``` r
@@ -116,7 +117,6 @@ matplot(t(DTI), type = "l")
 <img src="man/figures/README-unnamed-chunk-4-1.png" width="50%" />
 
 ``` r
-# run GLaRe
 par(mfrow = c(1, 3), cex = 0.5) # side-by-side plots
 DTI_pca <- GLaRe(
   mat = DTI,
@@ -132,7 +132,7 @@ DTI_pca <- GLaRe(
 
 DTI_ae <- GLaRe(
   mat = DTI,
-  learn = "autoencoder",
+  learn = "ae",
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
@@ -142,8 +142,8 @@ DTI_ae <- GLaRe(
   lim = 93,
   ae_args = list(link_fun = "linear", epoch = 50),
   verbose = FALSE)
-#> Warning in GLaRe(mat = DTI, learn = "autoencoder", kf = 5, sqcorrel =
-#> c("trainmean", : No qualifying criterion found, try adjusting parameters.
+#> Warning in GLaRe(mat = DTI, learn = "ae", kf = 5, sqcorrel = c("trainmean", :
+#> No qualifying criterion found, try adjusting parameters.
 ```
 
 ``` r

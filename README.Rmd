@@ -49,7 +49,8 @@ We use the Phenoeme dataset for this example (see [here](https://www.math.univ-t
 
 ```{r, out.width = "50%", fig.asp=0.75, message=FALSE, warning=FALSE}
 # Phoenome dataset:
-PH <- readr::read_table(file = "https://www.math.univ-toulouse.fr/~ferraty/SOFTWARES/NPFDA/npfda-phoneme.dat", col_names = FALSE)
+PH_path <- "https://www.math.univ-toulouse.fr/~ferraty/SOFTWARES/NPFDA/npfda-phoneme.dat"
+PH <- readr::read_table(file = PH_path, col_names = FALSE)
 PH <- as.matrix(PH)[, 1:150]
 par(mfrow = c(1, 1))
 matplot(t(PH)[, sample(1:nrow(PH), size = 20)], type = "l", xlab = "Freq.", ylab = "Log-periodogram")
@@ -77,7 +78,7 @@ ph_pca <- GLaRe(
 ## autoencoder
 ph_ae <- GLaRe(
   mat = PH,
-  learn = "autoencoder",
+  learn = "ae",
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
@@ -113,7 +114,6 @@ matplot(t(DTI), type = "l")
 ```
 
 ```{r, fig.asp = 0.33}
-# run GLaRe
 par(mfrow = c(1, 3), cex = 0.5) # side-by-side plots
 DTI_pca <- GLaRe(
   mat = DTI,
@@ -129,7 +129,7 @@ DTI_pca <- GLaRe(
 
 DTI_ae <- GLaRe(
   mat = DTI,
-  learn = "autoencoder",
+  learn = "ae",
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
