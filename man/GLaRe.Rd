@@ -12,8 +12,10 @@ GLaRe(
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
-  cutoffcriterion = 3,
-  cutoffvalue = 0.9
+  ae_args = list(),
+  cutoffcriterion = 0.5,
+  cutoffvalue = 0.9,
+  verbose = TRUE
 )
 }
 \arguments{

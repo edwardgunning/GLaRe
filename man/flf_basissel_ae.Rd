@@ -4,7 +4,14 @@
 \alias{flf_basissel_ae}
 \title{Basis selection for AE.}
 \usage{
-flf_basissel_ae(mat, kf, lim = lim, incr = incr, ae_args = list())
+flf_basissel_ae(
+  mat,
+  kf,
+  lim = lim,
+  incr = incr,
+  ae_args = list(),
+  verbose = TRUE
+)
 }
 \arguments{
 \item{Y}{an n times p data matrix.}

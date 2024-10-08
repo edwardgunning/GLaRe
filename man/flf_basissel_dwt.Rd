@@ -2,17 +2,25 @@
 % Please edit documentation in R/flf_basissel_dwt.R
 \name{flf_basissel_dwt}
 \alias{flf_basissel_dwt}
-\title{DWT}
+\title{Assess losslessness of DWT latent feature representation.}
 \usage{
 flf_basissel_dwt(
   mat,
   kf,
-  learn = learn_dwt,
-  wavespecs = list(filter = "d4", n.levels = 5, boundary = "periodic"),
-  center = TRUE,
-  breaks = c(seq(0.8, 0.975, by = 0.025), seq(0.975, 1, by = 0.001))
+  lim = min(ncol(mat) - 1, nrow(mat) - 1),
+  incr = 1,
+  verbose = TRUE
 )
 }
+\arguments{
+\item{mat}{an n times p data matrix.}
+
+\item{kf}{k, the number of folds in k-fold cross-validation,}
+
+\item{center}{Whether or not the data should be mean-centered prior to performing the latent feature transformation.}
+
+\item{scale}{Whether the data should be scaled prior to analysis, so that each variable has standard deviation 1.}
+}
 \description{
-DWT
+Assess losslessness of DWT latent feature representation.
 }

@@ -92,18 +92,15 @@ GLaRe <- function(
   # Principal Components Analysis -------------------------------------------
   if (learn == "pca") {
     out <- flf_basissel_pca(mat = mat, kf = kf, lim = lim, incr = incr, verbose = verbose)
-  }
-  else if (learn == "autoencoder") {
+  } else if (learn == "autoencoder") {
     out <- flf_basissel_ae(mat = mat, kf = kf, lim = lim, incr = incr, ae_args = ae_args, verbose = verbose)
+  } else if (learn == "dwt") {
+    out <- flf_basissel_dwt(mat = mat, kf = kf, lim = lim, incr = incr, verbose = verbose)
   }
-    #   out <- flf_basissel_ae(mat, learn_ae, kf, center, scale, ...)
-  # else if (learn == "dwt") {
-  #   out <- flf_basissel_dwt(mat, learn_dwt, kf, center, scale)
-  # } else if (learn == "autoencoder") {
-  #   out <- flf_basissel_ae(mat, learn_ae, kf, center, scale, ...)
-  # } else {
-  #   out <- flf_basissel_user(mat, learn_user, kf, center, scale, ...)
-  # }
+
+ # else {
+ #  #   out <- flf_basissel_user(mat, learn_user, kf, center, scale, ...)
+ #  # }
 
 
   n <- nrow(mat)

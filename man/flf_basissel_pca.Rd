@@ -9,7 +9,8 @@ flf_basissel_pca(
   kf,
   lim = min(ncol(mat) - 1, nrow(mat) - 1),
   incr = 1,
-  center = TRUE
+  center = TRUE,
+  verbose = TRUE
 )
 }
 \arguments{

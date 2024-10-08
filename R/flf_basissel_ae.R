@@ -54,7 +54,7 @@ learn_ae <- function(Y, k, ae_args) {
     predict(decoder, Ystar, verbose = FALSE)
   }
 
-  return(list(Extract = Extract, Transform = Transform))
+  list(Extract = Extract, Transform = Transform)
 }
 
 #' Basis selection for AE.
@@ -82,7 +82,7 @@ flf_basissel_ae <- function(mat, kf, lim = lim, incr = incr, ae_args = list(), v
 
   if(verbose) print("====== Training ======")
   for (j in 1:q) {
-    if(verbose) print(paste("= Latent Dim. =", j))
+    if(verbose) print(paste("= Latent Dim. =", breaks[j]))
     learnout_j <- learn_ae(Y = mat, k = breaks[j], ae_args = ae_args)
     Extract_j <- learnout_j[["Extract"]]
     Transform_j <- learnout_j[["Transform"]]
@@ -112,7 +112,7 @@ flf_basissel_ae <- function(mat, kf, lim = lim, incr = incr, ae_args = list(), v
     mati <- mat[kind, ]
 
     for (j in 1:r) {
-      if(verbose) print(paste("= Latent Dim. =", j))
+      if(verbose) print(paste("= Latent Dim. =", breaks[j]))
       learnout_v_j <- learn_ae(mat[-kind, ], k = breaks[j], ae_args = ae_args)
       Extract <- learnout_v_j[["Extract"]]
       Transform <- learnout_v_j[["Transform"]]
@@ -137,3 +137,6 @@ flf_basissel_ae <- function(mat, kf, lim = lim, incr = incr, ae_args = list(), v
   vline <- 0
   out <- list(breaks = breaks, corM_t = corM_t, rho_v = rho_v, Qrho_v = Qrho_v, vline = vline, r = r, n = n, p = p, Extract = Extract, Transform = Transform)
 }
+
+
+
