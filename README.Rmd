@@ -37,6 +37,12 @@ Load the `GLaRE` package.
 library(GLarE)
 ```
 
+Set random seed for both shuffling folds and stochastic optimisation of autoencoder.
+
+```{r seed}
+tensorflow::set_random_seed(1996)
+```
+
 ## Example: Phenoeme Data
 
 We use the Phenoeme dataset for this example (see [here](https://www.math.univ-toulouse.fr/~ferraty/SOFTWARES/NPFDA/)).
@@ -49,7 +55,7 @@ par(mfrow = c(1, 1))
 matplot(t(PH)[, sample(1:nrow(PH), size = 20)], type = "l", xlab = "Freq.", ylab = "Log-periodogram")
 ```
 
-We look at the representation given by PCA (left) and autoencoder (right)
+We look at the representation given by PCA, autoencoder and DWT.
 
 ```{r, fig.asp = 0.33}
 # run GLaRe
@@ -82,7 +88,7 @@ ph_ae <- GLaRe(
   ae_args = list(link_fun = "linear", epoch = 50),
   verbose = FALSE)
 
-## autoencoder
+## dwt
 ph_dwt <- GLaRe(
   mat = PH,
   learn = "dwt",
