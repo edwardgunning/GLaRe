@@ -14,10 +14,11 @@ knitr::opts_chunk$set(
 )
 ```
 
+<!-- badges: start -->
 
 <center> <img src="inst/figures/hex.png" alt="hex" width="200"/> </center>
 
-<!-- badges: start -->
+
 <!-- badges: end -->
 
 The goal of `GLaRE` is to facilitate the evaluation of losslessness of different latent feature representations based on generalisation error.
@@ -37,7 +38,7 @@ Load the `GLaRE` package.
 library(GLarE)
 ```
 
-Set random seed for both shuffling folds and stochastic optimisation of autoencoder.
+Set random seed for both shuffling folds and stochastic optimisation of the autoencoder model.
 
 ```{r seed}
 tensorflow::set_random_seed(1996)
@@ -72,7 +73,7 @@ ph_pca <- GLaRe(
   cutoffcriterion = 0.05,
   cutoffvalue = 0.9,
   incr = 10,
-  lim = 120,
+  lim = 250,
   verbose = FALSE)
 
 ## autoencoder
@@ -85,7 +86,7 @@ ph_ae <- GLaRe(
   cutoffcriterion = 0.05,
   cutoffvalue = 0.9,
   incr = 10,
-  lim = 120,
+  lim = 250,
   ae_args = list(link_fun = "linear", epoch = 50),
   verbose = FALSE)
 
@@ -99,7 +100,7 @@ ph_dwt <- GLaRe(
   cutoffcriterion = 0.05,
   cutoffvalue = 0.9,
   incr = 10,
-  lim = 120,
+  lim = 250,
   verbose = FALSE)
 ```
 

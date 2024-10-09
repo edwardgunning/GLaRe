@@ -1,9 +1,9 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- badges: start -->
 <center>
 <img src="inst/figures/hex.png" alt="hex" width="200"/>
 </center>
-<!-- badges: start -->
 <!-- badges: end -->
 
 The goal of `GLaRE` is to facilitate the evaluation of losslessness of
@@ -26,7 +26,7 @@ library(GLarE)
 ```
 
 Set random seed for both shuffling folds and stochastic optimisation of
-autoencoder.
+the autoencoder model.
 
 ``` r
 tensorflow::set_random_seed(1996)
@@ -64,7 +64,7 @@ ph_pca <- GLaRe(
   cutoffcriterion = 0.05,
   cutoffvalue = 0.9,
   incr = 10,
-  lim = 120,
+  lim = 250,
   verbose = FALSE)
 
 ## autoencoder
@@ -77,7 +77,7 @@ ph_ae <- GLaRe(
   cutoffcriterion = 0.05,
   cutoffvalue = 0.9,
   incr = 10,
-  lim = 120,
+  lim = 250,
   ae_args = list(link_fun = "linear", epoch = 50),
   verbose = FALSE)
 #> Warning in GLaRe(mat = PH, learn = "ae", kf = 5, sqcorrel = c("trainmean", : No
@@ -96,10 +96,8 @@ ph_dwt <- GLaRe(
   cutoffcriterion = 0.05,
   cutoffvalue = 0.9,
   incr = 10,
-  lim = 120,
+  lim = 250,
   verbose = FALSE)
-#> Warning in GLaRe(mat = PH, learn = "dwt", kf = 5, sqcorrel = c("trainmean", :
-#> No qualifying criterion found, try adjusting parameters.
 ```
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
