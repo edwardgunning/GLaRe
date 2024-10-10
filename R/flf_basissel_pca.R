@@ -11,16 +11,23 @@ learn_pca <- function(Y) {
   n <- nrow(Y) # number of observations
   p <- ncol(Y) # number of variables
 
-  svdY <- corpcor::fast.svd(Y) # change this back to fast.svd if we can install corpor (right now not available for R 4.0)
+  mu_t <- apply(Y, 2, mean)
+  Y_cent <- sweep(Y, MARGIN = 2, STATS = mu_t, FUN = "-")
+
+  svdY <- corpcor::fast.svd(Y_cent) # change this back to fast.svd if we can install corpor (right now not available for R 4.0)
   phi_t <- svdY$v
+
   Extract <- function(Y, k) {
-    Y <- if (NROW(Y) < NCOL(Y) || (n > p & NCOL(Y) == p)) as.matrix(t(Y)) else as.matrix(Y)
-    Ystar <- crossprod(as.matrix(Y), as.matrix(phi_t[, 1:k]))
+    Y_cent <- sweep(Y, MARGIN = 2, STATS = mu_t, FUN = "-")
+    Y_cent <- if (NROW(Y_cent) < NCOL(Y_cent) || (n > p & NCOL(Y_cent) == p)) as.matrix(t(Y_cent)) else as.matrix(Y_cent)
+    Ystar <- crossprod(as.matrix(Y_cent), as.matrix(phi_t[, 1:k]))
   }
+
   Transform <- function(Ystar, k) {
-    Yhat <- crossprod(t(Ystar), t(as.matrix(phi_t[, 1:k])))
+    Yhat_cent <- crossprod(t(Ystar), t(as.matrix(phi_t[, 1:k])))
+    Yhat <- sweep(Y, MARGIN = 2, STATS = mu_t, FUN = "+")
   }
-  return(list(phi_t = phi_t, Extract = compiler::cmpfun(Extract), Transform = compiler::cmpfun(Transform)))
+  return(list(mu_t = mu_t, phi_t = phi_t, Extract = compiler::cmpfun(Extract), Transform = compiler::cmpfun(Transform)))
 }
 
 
