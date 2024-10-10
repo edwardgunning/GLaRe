@@ -24,30 +24,45 @@ waveslim_dwt_to_mat <- function(Y) {
   t(apply(Y, 1, waveslim_dwt_to_vec))
 }
 
+
+#' Compute relative energy for a general wavelet coefficient matrix.
+#'
+#' @param D An N x T matrix of wavelet coefficients.
+#' @return En A N x T matrix containing the relative energy, such that row i and
+#' column k entry contains the cumulative proportion of energy explained by this
+#' coefficient and all coefficients greater in absolute value than it.
 Energy <- function(D) {
-  En <- D
-  total_Energy <- rep(0, nrow(D))
+  En <- D # energy matrix has same dimensions of coef matrix.
+  total_Energy <- vector("numeric", length = nrow(D)) # each subject has a total energy
   for (i in 1:nrow(D)) {
-    ix <- order(-abs(D[i, ]))
-    Csort <- -D[i, ix]
-    total_Energy[i] <- sum(Csort^2)
-    energy <- cumsum(as.numeric(Csort^2)) / total_Energy[i]
-    En[i, ix] <- energy
+    # indexing subject (row) i....
+    ix <- order(abs(D[i, ]), decreasing = TRUE) # indices of wavelet coefficients, ordered from largest to smallest abs value
+    Csort <- D[i, ix] # vector of wavelet coefficients ordered according size (largest to smallest)
+    total_Energy[i] <- sum(Csort^2) # total energy = sum of all squared coefs (could have computed before order)
+    energy <- cumsum(as.numeric(Csort^2)) / total_Energy[i] # ordered relative energy vector: kth entry contains cumulative prop of energy explained by k largest wavelet coefs.
+    En[i, ix] <- energy # vector such that entry k = cumulative proportion of energy explained by this coefficient and all coefficients greater in absolute value than it.
   }
-  return(En)
+  En
 }
 
+#' Compute scree from relative energy matrix.
+#'
+#' @param D An N x T matrix of wavelet coefficients.
+#' @return En A N x T matrix containing the relative energy, such that row i and
+#' column k entry contains the cumulative proportion of energy explained by this
+#' coefficient and all coefficients greater in absolute value than it.
 get_Energy_scree <- function(D) {
-  Dcomp <- Energy(D)
-  scree <- apply(Dcomp, 2, mean)
+  Dcomp <- Energy(D) # get relative energy matrix.
+  scree <- apply(Dcomp, 2, mean) # calculate mean energy for each coefficient.
 }
 
 threshold_fun <- function(D, scree, k) {
-  screeix <- order(scree)
-  Dthresh_inds <- screeix[ - c(1:k)]
+  screeix <- order(scree, decreasing = FALSE) # order coefs by mean energy explained (smallest to largest)
+  # ? intuition here is that if rel energy = 1, then all energy has been explained before this coef?
+  Dthresh_inds <- screeix[ - c(1:k)] # remove the k largest scree inds
   D0 <- D
-  D0[, Dthresh_inds] <- 0
-  D0
+  D0[, Dthresh_inds] <- 0 # set the remainder (i.e., not the k largest scree inds) to zero.
+  D0 # return thresholded matrix.
 }
 
 idwt_vec <- function(d, ppad, p) {
@@ -65,10 +80,6 @@ idwt_vec <- function(d, ppad, p) {
 idwt_mat <- function(D, ppad, p) {
   t(apply(D, 1, idwt_vec, ppad = ppad, p = p))
 }
-
-
-# -------------------------------------------------------------------------
-
 
 
 learn_dwt <- function(Y) {

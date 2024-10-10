@@ -21,11 +21,13 @@ learn_pca <- function(Y) {
     Y_cent <- sweep(Y, MARGIN = 2, STATS = mu_t, FUN = "-")
     Y_cent <- if (NROW(Y_cent) < NCOL(Y_cent) || (n > p & NCOL(Y_cent) == p)) as.matrix(t(Y_cent)) else as.matrix(Y_cent)
     Ystar <- crossprod(as.matrix(Y_cent), as.matrix(phi_t[, 1:k]))
+    Ystar
   }
 
   Transform <- function(Ystar, k) {
     Yhat_cent <- crossprod(t(Ystar), t(as.matrix(phi_t[, 1:k])))
-    Yhat <- sweep(Y, MARGIN = 2, STATS = mu_t, FUN = "+")
+    Yhat <- sweep(Yhat_cent, MARGIN = 2, STATS = mu_t, FUN = "+")
+    Yhat
   }
   return(list(mu_t = mu_t, phi_t = phi_t, Extract = compiler::cmpfun(Extract), Transform = compiler::cmpfun(Transform)))
 }
@@ -41,7 +43,7 @@ learn_pca <- function(Y) {
 #' @export
 #'
 #' @examples
-flf_basissel_pca <- function(mat, kf, lim = min(ncol(mat) - 1, nrow(mat) - 1), incr = 1, center = TRUE, verbose = TRUE) {
+flf_basissel_pca <- function(mat, kf, lim = min(ncol(mat) - 1, nrow(mat) - 1), incr = 1, verbose = TRUE) {
   set.seed(123)
   #* SET UP: MATRIX SIZE AND FUNCTIONS
   mat <- as.matrix(mat)
@@ -55,10 +57,10 @@ flf_basissel_pca <- function(mat, kf, lim = min(ncol(mat) - 1, nrow(mat) - 1), i
     matrix(rep(x, each = n), ncol = n, byrow = TRUE)
   }
 
-  #* REMOVE ROW MEANS
-  if (center) {
-    mat <- as.matrix(mat - rep.col(apply(mat, 1, mean), p))
-  }
+  # #* REMOVE ROW MEANS
+  # if (center) {
+  #   mat <- as.matrix(mat - rep.col(apply(mat, 1, mean), p))
+  # }
 
   #* TRAINING - ALL DATA
   LearnOut <- learn_pca(mat)
