@@ -73,6 +73,7 @@ flf_basissel_ae <- function(mat, kf, lim = lim, incr = incr, ae_args = list(), v
 
   #* TRAINING - ALL DATA
   breaks <- c(seq(1, lim, by = incr))
+  breaks <- breaks[which(breaks <= min(n - 1, p - 1))]
   q <- r <- length(breaks)
 
   diff_t <- array(0, c(n, q))

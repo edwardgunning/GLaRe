@@ -3,10 +3,13 @@ prepare_pad_dwt <- function(Y) {
   p <- ncol(Y)
   log2ppad <- ceiling(log2(p))
   ppad <- 2^log2ppad
+  ppad_extra <- ppad - p
+  ppad_left <- ceiling(ppad_extra/2)
+  ppad_right <- floor(ppad_extra/2)
   if(p != ppad) {
-    Ypad <- cbind(Y, matrix(0, nrow(Y), ncol =  ppad - p))
+    Ypad <- cbind(matrix(0, nrow(Y), ncol =  ppad_left), Y, matrix(0, nrow(Y), ncol =  ppad_right))
   }
-  list(Ypad = Ypad, ppad = ppad, log2ppad = log2ppad)
+  list(Ypad = Ypad, ppad = ppad, log2ppad = log2ppad, ppad_left = ppad_left, ppad_right = ppad_right)
 }
 
 
@@ -65,7 +68,7 @@ threshold_fun <- function(D, scree, k) {
   D0 # return thresholded matrix.
 }
 
-idwt_vec <- function(d, ppad, p) {
+idwt_vec <- function(d, ppad, ppad_left, ppad_right) {
   dwt_obj_refill <- waveslim::dwt(rep(0, ppad), n.levels = log2(ppad), wf = "la8", boundary = "periodic")
   jinds <- seq_along(dwt_obj_refill[[1]])
   dwt_obj_refill[[1]] <- d[jinds]
@@ -74,11 +77,11 @@ idwt_vec <- function(d, ppad, p) {
     jinds <- offset_j + seq_along(dwt_obj_refill[[j]])
     dwt_obj_refill[[j]] <- d[jinds]
   }
-  waveslim::idwt(y = dwt_obj_refill)[1:p]
+  waveslim::idwt(y = dwt_obj_refill)[(ppad_left + 1):(ppad - ppad_right)]
 }
 
-idwt_mat <- function(D, ppad, p) {
-  t(apply(D, 1, idwt_vec, ppad = ppad, p = p))
+idwt_mat <- function(D, ppad, ppad_left, ppad_right) {
+  t(apply(D, 1, idwt_vec, ppad = ppad, ppad_left = ppad_left, ppad_right = ppad_right))
 }
 
 
@@ -88,6 +91,8 @@ learn_dwt <- function(Y) {
   Ypad_obj <- prepare_pad_dwt(Y = Y)
   Ypad <- Ypad_obj$Ypad
   ppad <- Ypad_obj$ppad
+  ppad_left <- Ypad_obj$ppad_left
+  ppad_right <- Ypad_obj$ppad_right
   D_train <- waveslim_dwt_to_mat(Y = Ypad)
   scree <- get_Energy_scree(D = D_train)
 
@@ -98,7 +103,7 @@ learn_dwt <- function(Y) {
   }
 
   Transform <- function(Ystar) {
-    idwt_mat(D = Ystar, p = p, ppad = ppad)
+    idwt_mat(D = Ystar, ppad = ppad, ppad_left = ppad_left, ppad_right = ppad_right)
   }
 
   list(Extract = Extract, Transform = Transform)
