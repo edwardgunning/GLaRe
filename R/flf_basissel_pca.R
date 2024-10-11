@@ -17,19 +17,19 @@ learn_pca <- function(Y) {
   svdY <- corpcor::fast.svd(Y_cent) # change this back to fast.svd if we can install corpor (right now not available for R 4.0)
   phi_t <- svdY$v
 
-  Extract <- function(Y, k) {
+  Encode <- function(Y, k) {
     Y_cent <- sweep(Y, MARGIN = 2, STATS = mu_t, FUN = "-")
     Y_cent <- if (NROW(Y_cent) < NCOL(Y_cent) || (n > p & NCOL(Y_cent) == p)) as.matrix(t(Y_cent)) else as.matrix(Y_cent)
     Ystar <- crossprod(as.matrix(Y_cent), as.matrix(phi_t[, 1:k]))
     Ystar
   }
 
-  Transform <- function(Ystar, k) {
+  Decode <- function(Ystar, k) {
     Yhat_cent <- crossprod(t(Ystar), t(as.matrix(phi_t[, 1:k])))
     Yhat <- sweep(Yhat_cent, MARGIN = 2, STATS = mu_t, FUN = "+")
     Yhat
   }
-  return(list(mu_t = mu_t, phi_t = phi_t, Extract = compiler::cmpfun(Extract), Transform = compiler::cmpfun(Transform)))
+  return(list(mu_t = mu_t, phi_t = phi_t, Encode = compiler::cmpfun(Encode), Decode = compiler::cmpfun(Decode)))
 }
 
 
@@ -69,8 +69,8 @@ flf_basissel_pca <- function(mat, kf, lim = min(ncol(mat) - 1, nrow(mat) - 1), i
   q <- length(breaks)
 
 
-  Extract <- LearnOut[["Extract"]]
-  Transform <- LearnOut[["Transform"]]
+  Encode <- LearnOut[["Encode"]]
+  Decode <- LearnOut[["Decode"]]
 
   diff_t <- array(0, c(n, q))
   corM_t <- rep(0, q)
@@ -79,7 +79,7 @@ flf_basissel_pca <- function(mat, kf, lim = min(ncol(mat) - 1, nrow(mat) - 1), i
   if(verbose) print("====== Training ======")
   for (j in 1:q) { # q is the maximum number of eigenvectors
       if(verbose) print(paste("= Latent Dim. =", breaks[j]))
-      proj_t <- Transform(Extract(mat, breaks[j]), breaks[j])
+      proj_t <- Decode(Encode(mat, breaks[j]), breaks[j])
       corM_t[j] <- cor(c(proj_t), c(mat))^2
     }
 
@@ -107,12 +107,12 @@ flf_basissel_pca <- function(mat, kf, lim = min(ncol(mat) - 1, nrow(mat) - 1), i
     kind <- which(folds == i, arr.ind = TRUE)
     mati <- mat[kind, ]
     LearnOut <- learn_pca(mat[-kind, ])
-    Extractv <- LearnOut[["Extract"]]
-    Transformv <- LearnOut[["Transform"]]
+    Encodev <- LearnOut[["Encode"]]
+    Decodev <- LearnOut[["Decode"]]
 
     for (j in 1:r) {
       if(verbose) print(paste("= Latent Dim. =", breaks[j]))
-      proj_v[kind, , j] <- Transformv(Extractv(mati, breaks[j]), breaks[j])
+      proj_v[kind, , j] <- Decodev(Encodev(mati, breaks[j]), breaks[j])
       proji <- as.matrix(if (NROW(proj_v[kind, , j]) > NCOL(proj_v[kind, , j]) && (n < p || NROW(proj_v[kind, , j]) == p)) {
         t(proj_v[kind, , j])
       } else {
@@ -148,7 +148,7 @@ flf_basissel_pca <- function(mat, kf, lim = min(ncol(mat) - 1, nrow(mat) - 1), i
 
 
   #* OUTPUT
-  out <- list(corM_t = corM_t, rho_v = rho_v, Qrho_v = Qrho_v, vline = vline, breaks = breaks, r = r, q = q, n = n, p = p, Extract = Extract, Transform = Transform)
+  out <- list(corM_t = corM_t, rho_v = rho_v, Qrho_v = Qrho_v, vline = vline, breaks = breaks, r = r, q = q, n = n, p = p, Encode = Encode, Decode = Decode)
 }
 
 flf_basissel_pca <- compiler::cmpfun(flf_basissel_pca)

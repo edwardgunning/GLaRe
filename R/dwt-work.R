@@ -96,17 +96,17 @@ learn_dwt <- function(Y) {
   D_train <- waveslim_dwt_to_mat(Y = Ypad)
   scree <- get_Energy_scree(D = D_train)
 
-  Extract <- function(Y, k) {
+  Encode <- function(Y, k) {
     Ypad <- prepare_pad_dwt(Y = Y)$Ypad
     D <- waveslim_dwt_to_mat(Y = Ypad)
     threshold_fun(D = D, scree = scree, k = k)
   }
 
-  Transform <- function(Ystar) {
+  Decode <- function(Ystar) {
     idwt_mat(D = Ystar, ppad = ppad, ppad_left = ppad_left, ppad_right = ppad_right)
   }
 
-  list(Extract = Extract, Transform = Transform)
+  list(Encode = Encode, Decode = Decode)
 }
 
 

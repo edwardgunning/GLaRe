@@ -46,15 +46,15 @@ learn_ae <- function(Y, k, ae_args) {
     verbose = FALSE
   )
 
-  Extract <- function(Y) {
+  Encode <- function(Y) {
     predict(encoder, Y, verbose = FALSE)
   }
 
-  Transform <- function(Ystar) {
+  Decode <- function(Ystar) {
     predict(decoder, Ystar, verbose = FALSE)
   }
 
-  list(Extract = Extract, Transform = Transform)
+  list(Encode = Encode, Decode = Decode)
 }
 
 #' Basis selection for AE.
@@ -85,9 +85,9 @@ flf_basissel_ae <- function(mat, kf, lim = lim, incr = incr, ae_args = list(), v
   for (j in 1:q) {
     if(verbose) print(paste("= Latent Dim. =", breaks[j]))
     learnout_j <- learn_ae(Y = mat, k = breaks[j], ae_args = ae_args)
-    Extract_j <- learnout_j[["Extract"]]
-    Transform_j <- learnout_j[["Transform"]]
-    proj_t <- Transform_j(Extract_j(mat))
+    Encode_j <- learnout_j[["Encode"]]
+    Decode_j <- learnout_j[["Decode"]]
+    proj_t <- Decode_j(Encode_j(mat))
     corM_t[j] <- cor(c(proj_t), c(mat))^2
   }
 
@@ -115,10 +115,10 @@ flf_basissel_ae <- function(mat, kf, lim = lim, incr = incr, ae_args = list(), v
     for (j in 1:r) {
       if(verbose) print(paste("= Latent Dim. =", breaks[j]))
       learnout_v_j <- learn_ae(mat[-kind, ], k = breaks[j], ae_args = ae_args)
-      Extract <- learnout_v_j[["Extract"]]
-      Transform <- learnout_v_j[["Transform"]]
+      Encode <- learnout_v_j[["Encode"]]
+      Decode <- learnout_v_j[["Decode"]]
 
-      proj_v[kind, ] <- Transform(Extract(mati))
+      proj_v[kind, ] <- Decode(Encode(mati))
       proji <- as.matrix(if (NROW(proj_v[kind, ]) > NCOL(proj_v[kind, ]) && (n < p || NROW(proj_v[kind, ]) == p)) t(proj_v[kind, ]) else proj_v[kind, ])
       matir <- if (NROW(mati) < NCOL(mati) || (n > p & NCOL(mati) == p)) as.matrix(t(mati)) else as.matrix(mati)
       rho_v[kind, j] <- sapply(
@@ -136,7 +136,7 @@ flf_basissel_ae <- function(mat, kf, lim = lim, incr = incr, ae_args = list(), v
   }
 
   vline <- 0
-  out <- list(breaks = breaks, corM_t = corM_t, rho_v = rho_v, Qrho_v = Qrho_v, vline = vline, r = r, n = n, p = p, Extract = Extract, Transform = Transform)
+  out <- list(breaks = breaks, corM_t = corM_t, rho_v = rho_v, Qrho_v = Qrho_v, vline = vline, r = r, n = n, p = p, Encode = Encode, Decode = Decode)
 }
 
 

@@ -26,8 +26,8 @@ flf_basissel_dwt <- function(mat, kf, lim = min(ncol(mat) - 1, nrow(mat) - 1), i
   #* TRAINING - ALL DATA
   LearnOut <- learn_dwt(Y = mat)
 
-  Extract <- LearnOut[["Extract"]]
-  Transform <- LearnOut[["Transform"]]
+  Encode <- LearnOut[["Encode"]]
+  Decode <- LearnOut[["Decode"]]
 
   diff_t <- array(0, c(n, q))
   corM_t <- rep(0, q)
@@ -36,7 +36,7 @@ flf_basissel_dwt <- function(mat, kf, lim = min(ncol(mat) - 1, nrow(mat) - 1), i
   if(verbose) print("====== Training ======")
   for (j in 1:q) { # q is the maximum number of eigenvectors
     if(verbose) print(paste("= Latent Dim. =", breaks[j]))
-    proj_t <- Transform(Ystar = Extract(Y = mat, k = breaks[j]))
+    proj_t <- Decode(Ystar = Encode(Y = mat, k = breaks[j]))
     corM_t[j] <- cor(c(proj_t), c(mat))^2
   }
 
@@ -64,12 +64,12 @@ flf_basissel_dwt <- function(mat, kf, lim = min(ncol(mat) - 1, nrow(mat) - 1), i
     kind <- which(folds == i, arr.ind = TRUE)
     mati <- mat[kind, ]
     LearnOut <- learn_dwt(mat[-kind, ])
-    Extractv <- LearnOut[["Extract"]]
-    Transformv <- LearnOut[["Transform"]]
+    Encodev <- LearnOut[["Encode"]]
+    Decodev <- LearnOut[["Decode"]]
 
     for (j in 1:r) {
       if(verbose) print(paste("= Latent Dim. =", breaks[j]))
-      proj_v[kind, , j] <- Transformv(Ystar = Extractv(Y = mati, k = breaks[j]))
+      proj_v[kind, , j] <- Decodev(Ystar = Encodev(Y = mati, k = breaks[j]))
       proji <- as.matrix(if (NROW(proj_v[kind, , j]) > NCOL(proj_v[kind, , j]) && (n < p || NROW(proj_v[kind, , j]) == p)) {
         t(proj_v[kind, , j])
       } else {
@@ -104,7 +104,7 @@ flf_basissel_dwt <- function(mat, kf, lim = min(ncol(mat) - 1, nrow(mat) - 1), i
   vline <- NA
 
   #* OUTPUT
-  out <- list(corM_t = corM_t, rho_v = rho_v, Qrho_v = Qrho_v, vline = vline, breaks = breaks, r = r, q = q, n = n, p = p, Extract = Extract, Transform = Transform)
+  out <- list(corM_t = corM_t, rho_v = rho_v, Qrho_v = Qrho_v, vline = vline, breaks = breaks, r = r, q = q, n = n, p = p, Encode = Encode, Decode = Decode)
 }
 
 flf_basissel_dwt <- compiler::cmpfun(flf_basissel_dwt)
