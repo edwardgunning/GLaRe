@@ -88,7 +88,7 @@ flf_basissel_ae <- function(mat, kf, lim = lim, incr = incr, ae_args = list(), v
     Encode_j <- learnout_j[["Encode"]]
     Decode_j <- learnout_j[["Decode"]]
     proj_t <- Decode_j(Encode_j(mat))
-    corM_t[j] <- cor(c(proj_t), c(mat))^2
+    corM_t[j] <- 1 - cor(c(proj_t), c(mat))^2
   }
 
   #* CROSS VALIDATION
@@ -123,12 +123,16 @@ flf_basissel_ae <- function(mat, kf, lim = lim, incr = incr, ae_args = list(), v
       matir <- if (NROW(mati) < NCOL(mati) || (n > p & NCOL(mati) == p)) as.matrix(t(mati)) else as.matrix(mati)
       rho_v[kind, j] <- sapply(
         seq.int(dim(proji)[1]),
-        function(i) cor(as.matrix(proji)[i, ], as.matrix(t(matir))[i, ])^2
+        function(i) 1 - cor(as.matrix(proji)[i, ], as.matrix(t(matir))[i, ])^2
       )
       corM_v[j] <- cor(c(proj_v), c(mat))^2
       PRESS[j] <- norm(as.matrix(proj_v - mat), "F")^2
     }
   }
+
+
+  # Change to 1-sqcor: ------------------------------------------------------
+
 
   # sort rows of correlation matrix
   for (s in 1:ncol(rho_v)) {

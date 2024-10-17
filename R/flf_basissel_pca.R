@@ -80,7 +80,7 @@ flf_basissel_pca <- function(mat, kf, lim = min(ncol(mat) - 1, nrow(mat) - 1), i
   for (j in 1:q) { # q is the maximum number of eigenvectors
       if(verbose) print(paste("= Latent Dim. =", breaks[j]))
       proj_t <- Decode(Encode(mat, breaks[j]), breaks[j])
-      corM_t[j] <- cor(c(proj_t), c(mat))^2
+      corM_t[j] <- 1 - cor(c(proj_t), c(mat))^2
     }
 
   #* CROSS VALIDATION
@@ -119,7 +119,7 @@ flf_basissel_pca <- function(mat, kf, lim = min(ncol(mat) - 1, nrow(mat) - 1), i
         proj_v[kind, , j]
       })
       matir <- if (NROW(mati) < NCOL(mati) || (n > p & NCOL(mati) == p)) as.matrix(t(mati)) else as.matrix(mati)
-      corM_v[j] <- cor(c(proj_v[, , j]), c(mat))^2
+      corM_v[j] <- 1 - cor(c(proj_v[, , j]), c(mat))^2
       PRESS[j] <- norm(as.matrix(proj_v[, , j] - mat), "F")^2
     }
   }
@@ -129,7 +129,7 @@ flf_basissel_pca <- function(mat, kf, lim = min(ncol(mat) - 1, nrow(mat) - 1), i
     x <- as.matrix(proj_v[, , l])
     rho_v[, l] <- sapply(
       seq.int(dim(x)[1]),
-      function(i) cor(as.matrix(x)[i, ], as.matrix(mat)[i, ])^2
+      function(i) 1 - cor(as.matrix(x)[i, ], as.matrix(mat)[i, ])^2
     )
   }
   rho_v <- matrix(unlist(rho_v), n, r)

@@ -71,9 +71,9 @@ ph_pca <- GLaRe(
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
   cutoffcriterion = 0.05,
-  cutoffvalue = 0.9,
+  cutoffvalue = 0.95,
   incr = 10,
-  lim = 250,
+  lim = ncol(PH),
   verbose = FALSE)
 
 ## autoencoder
@@ -84,9 +84,9 @@ ph_ae <- GLaRe(
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
   cutoffcriterion = 0.05,
-  cutoffvalue = 0.9,
+  cutoffvalue = 0.95,
   incr = 10,
-  lim = 250,
+  lim = ncol(PH),
   ae_args = list(link_fun = "linear", epoch = 50),
   verbose = FALSE)
 
@@ -98,9 +98,9 @@ ph_dwt <- GLaRe(
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
   cutoffcriterion = 0.05,
-  cutoffvalue = 0.9,
+  cutoffvalue = 0.95,
   incr = 10,
-  lim = 250,
+  lim = ncol(PH),
   verbose = FALSE)
 ```
 
@@ -125,7 +125,7 @@ DTI_pca <- GLaRe(
   cutoffcriterion = 0.05,
   cutoffvalue = 0.95,
   incr = 8,
-  lim = 93,
+  lim = nrow(DTI),
   verbose = FALSE)
 
 DTI_ae <- GLaRe(
@@ -137,7 +137,7 @@ DTI_ae <- GLaRe(
   cutoffcriterion = 0.05,
   cutoffvalue = 0.95,
   incr = 8,
-  lim = 93,
+  lim = nrow(DTI),
   ae_args = list(link_fun = "linear", epoch = 50),
   verbose = FALSE)
 
@@ -150,7 +150,7 @@ DTI_dwt <- GLaRe(
   cutoffcriterion = 0.05,
   cutoffvalue = 0.95,
   incr = 8,
-  lim = 93, 
+  lim = nrow(DTI), 
   verbose = FALSE)
 ```
 

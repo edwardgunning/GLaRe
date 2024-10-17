@@ -62,9 +62,9 @@ ph_pca <- GLaRe(
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
   cutoffcriterion = 0.05,
-  cutoffvalue = 0.9,
+  cutoffvalue = 0.95,
   incr = 10,
-  lim = 250,
+  lim = ncol(PH),
   verbose = FALSE)
 
 ## autoencoder
@@ -75,16 +75,11 @@ ph_ae <- GLaRe(
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
   cutoffcriterion = 0.05,
-  cutoffvalue = 0.9,
+  cutoffvalue = 0.95,
   incr = 10,
-  lim = 250,
+  lim = ncol(PH),
   ae_args = list(link_fun = "linear", epoch = 50),
   verbose = FALSE)
-#> Warning in GLaRe(mat = PH, learn = "ae", kf = 5, sqcorrel = c("trainmean", : No
-#> qualifying criterion found, try adjusting parameters.
-```
-
-``` r
 
 ## dwt
 ph_dwt <- GLaRe(
@@ -94,9 +89,9 @@ ph_dwt <- GLaRe(
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
   cutoffcriterion = 0.05,
-  cutoffvalue = 0.9,
+  cutoffvalue = 0.95,
   incr = 10,
-  lim = 250,
+  lim = ncol(PH),
   verbose = FALSE)
 ```
 
@@ -125,7 +120,7 @@ DTI_pca <- GLaRe(
   cutoffcriterion = 0.05,
   cutoffvalue = 0.95,
   incr = 8,
-  lim = 93,
+  lim = nrow(DTI),
   verbose = FALSE)
 
 DTI_ae <- GLaRe(
@@ -137,14 +132,9 @@ DTI_ae <- GLaRe(
   cutoffcriterion = 0.05,
   cutoffvalue = 0.95,
   incr = 8,
-  lim = 93,
+  lim = nrow(DTI),
   ae_args = list(link_fun = "linear", epoch = 50),
   verbose = FALSE)
-#> Warning in GLaRe(mat = DTI, learn = "ae", kf = 5, sqcorrel = c("trainmean", :
-#> No qualifying criterion found, try adjusting parameters.
-```
-
-``` r
 
 DTI_dwt <- GLaRe(
   mat = DTI,
@@ -155,7 +145,7 @@ DTI_dwt <- GLaRe(
   cutoffcriterion = 0.05,
   cutoffvalue = 0.95,
   incr = 8,
-  lim = 93, 
+  lim = nrow(DTI), 
   verbose = FALSE)
 ```
 

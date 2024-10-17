@@ -26,8 +26,9 @@ summary_correlation_plot <- function(out_basisel, cvqlines, r, q, breaks, method
     col = "green",
     lwd = 3,
     lty = 1,
+    panel.first = c(abline(h = 0, lty = 1, col = 'black'), abline(h = 1, lty = 1, col = 'black')),
     xlab = "No. of Latent Features",
-    ylab = expression(paste("Squared Correlation (", R^2, ")", sep = "")),
+    ylab = expression(paste("Loss: 1 - Squared Correlation (", 1 - R^2, ")", sep = "")),
     xlim = range(breaks),
     ylim = c(0, 1),
     main = paste("Latent Feature Representation \n Summary:", method_name)
@@ -48,7 +49,7 @@ summary_correlation_plot <- function(out_basisel, cvqlines, r, q, breaks, method
   }
 
 
-  legend("bottomright",
+  legend("topright",
     legend = c(
       bquote(paste("CV Min ", R^2, sep = "")),
       bquote(paste("CV Mean ", R^2, sep = "")),
@@ -118,11 +119,11 @@ GLaRe <- function(
 
   # Qualifying Criterion and Add to plot: -----------------------------------
   cutoff_criterion_quantiles <- apply(out[["rho_v"]], 2, function(x) quantile(x, cutoffcriterion))
-  if(!any(cutoff_criterion_quantiles >= cutoffvalue)) {
+  if(!any(cutoff_criterion_quantiles <= cutoffvalue)) {
     warning("No qualifying criterion found, try adjusting parameters.")
     qc <- NA
   } else {
-    index <- min(which(cutoff_criterion_quantiles >= cutoffvalue))
+    index <- min(which(cutoff_criterion_quantiles <= cutoffvalue))
     qc <- breaks[index]
   }
 

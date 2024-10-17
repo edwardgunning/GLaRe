@@ -33,7 +33,7 @@ waveslim_dwt_to_mat <- function(Y) {
 #' @param D An N x T matrix of wavelet coefficients.
 #' @return En A N x T matrix containing the relative energy, such that row i and
 #' column k entry contains the cumulative proportion of energy explained by this
-#' coefficient and all coefficients greater in absolute value than it.
+#' coefficient and all coefficients greater in absolute value than it for subject i.
 Energy <- function(D) {
   En <- D # energy matrix has same dimensions of coef matrix.
   total_Energy <- vector("numeric", length = nrow(D)) # each subject has a total energy

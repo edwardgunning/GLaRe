@@ -13,8 +13,8 @@ DTI_pca <- GLaRe(
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
-  cutoffcriterion = 0.05,
-  cutoffvalue = 0.95,
+  cutoffcriterion = 0.95,
+  cutoffvalue = 0.05,
   incr = 8,
   lim = 93)
 
@@ -24,8 +24,8 @@ DTI_ae <- GLaRe(
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
-  cutoffcriterion = 0.05,
-  cutoffvalue = 0.95,
+  cutoffcriterion = 0.95,
+  cutoffvalue = 0.05,
   incr = 8,
   lim = 93,
   ae_args = list(link_fun = "linear", epoch = 50))
@@ -36,8 +36,8 @@ DTI_dwt <- GLaRe(
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
-  cutoffcriterion = 0.05,
-  cutoffvalue = 0.95,
+  cutoffcriterion = 0.95,
+  cutoffvalue = 0.05,
   incr = 8,
   lim = 93)
 
@@ -58,6 +58,7 @@ DTI_dwt <- GLaRe(
 # )
 
 PH <- readr::read_table(file = "https://www.math.univ-toulouse.fr/~ferraty/SOFTWARES/NPFDA/npfda-phoneme.dat", col_names = FALSE)
+dim(PH)
 PH <- as.matrix(PH)[, 1:150]
 matplot(t(PH), type = "l")
 par(mfrow = c(1, 2))
