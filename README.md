@@ -61,8 +61,8 @@ ph_pca <- GLaRe(
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
-  cutoffcriterion = 0.05,
-  cutoffvalue = 0.95,
+  cutoffcriterion = 0.95,
+  cutoffvalue = 0.05,
   incr = 10,
   lim = ncol(PH),
   verbose = FALSE)
@@ -74,12 +74,17 @@ ph_ae <- GLaRe(
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
-  cutoffcriterion = 0.05,
-  cutoffvalue = 0.95,
+  cutoffcriterion = 0.95,
+  cutoffvalue = 0.05,
   incr = 10,
   lim = ncol(PH),
   ae_args = list(link_fun = "linear", epoch = 50),
   verbose = FALSE)
+#> Warning in GLaRe(mat = PH, learn = "ae", kf = 5, sqcorrel = c("trainmean", : No
+#> qualifying criterion found, try adjusting parameters.
+```
+
+``` r
 
 ## dwt
 ph_dwt <- GLaRe(
@@ -88,11 +93,13 @@ ph_dwt <- GLaRe(
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
-  cutoffcriterion = 0.05,
-  cutoffvalue = 0.95,
+  cutoffcriterion = 0.95,
+  cutoffvalue = 0.05,
   incr = 10,
   lim = ncol(PH),
   verbose = FALSE)
+#> Warning in GLaRe(mat = PH, learn = "dwt", kf = 5, sqcorrel = c("trainmean", :
+#> No qualifying criterion found, try adjusting parameters.
 ```
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
@@ -117,8 +124,8 @@ DTI_pca <- GLaRe(
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
-  cutoffcriterion = 0.05,
-  cutoffvalue = 0.95,
+  cutoffcriterion = 0.95,
+  cutoffvalue = 0.05,
   incr = 8,
   lim = nrow(DTI),
   verbose = FALSE)
@@ -129,12 +136,17 @@ DTI_ae <- GLaRe(
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
-  cutoffcriterion = 0.05,
-  cutoffvalue = 0.95,
+  cutoffcriterion = 0.95,
+  cutoffvalue = 0.05,
   incr = 8,
   lim = nrow(DTI),
   ae_args = list(link_fun = "linear", epoch = 50),
   verbose = FALSE)
+#> Warning in GLaRe(mat = DTI, learn = "ae", kf = 5, sqcorrel = c("trainmean", :
+#> No qualifying criterion found, try adjusting parameters.
+```
+
+``` r
 
 DTI_dwt <- GLaRe(
   mat = DTI,
@@ -142,8 +154,8 @@ DTI_dwt <- GLaRe(
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.5,
-  cutoffcriterion = 0.05,
-  cutoffvalue = 0.95,
+  cutoffcriterion = 0.95,
+  cutoffvalue = 0.05,
   incr = 8,
   lim = nrow(DTI), 
   verbose = FALSE)
