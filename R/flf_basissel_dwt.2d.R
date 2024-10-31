@@ -1,5 +1,5 @@
-#' Assess losslessness of DWT latent feature representation.
-#' @param mat an n times p data matrix.
+#' Assess losslessness of 2-D DWT latent feature representation.
+#' @param mat an n times p times q data array, containing p times q images in the n slices
 #' @param kf k, the number of folds in k-fold cross-validation,
 #' @param center Whether or not the data should be mean-centered prior to performing the latent feature transformation.
 #' @param scale Whether the data should be scaled prior to analysis, so that each variable has standard deviation 1.
@@ -8,13 +8,18 @@
 #' @export
 #'
 #' @examples
-flf_basissel_dwt <- function(mat, kf, latent_dim_from = 1, latent_dim_to = min(ncol(mat) - 1, nrow(mat) - 1), latent_dim_by = 1, verbose = TRUE) {
-  #* SET UP: MATRIX SIZE AND FUNCTIONS
-  mat <- as.matrix(mat)
-  n <- nrow(mat)
-  p <- ncol(mat)
+flf_basissel_dwt.2d <- function(mat, kf, latent_dim_from = 1, latent_dim_to = min(ncol(mat) - 1, nrow(mat) - 1), latent_dim_by = 1, verbose = TRUE) {
+  if (!length(dim(mat)) == 3) {
+    stop("mat must be a 3-dimensional array, where each slice is an image.")
+  }
+  mat_dims <- dim(mat)
+  n <- mat_dims[1]
+  p1 <- mat_dims[2]
+  p2 <- mat_dims[3]
+  p <- p1 * p2
+  mat_flattened <- keras::array_reshape(mat, dim = c(n, p))
 
-  breaks <- seq(latent_dim_from, latent_dim_to, by = latent_dim_by)
+  breaks <- seq(1, latent_dim_to, by = latent_dim_by)
   breaks <- breaks[which(breaks <= min(n - 1, p - 1))]
   q <- length(breaks)
 
@@ -23,7 +28,7 @@ flf_basissel_dwt <- function(mat, kf, latent_dim_from = 1, latent_dim_to = min(n
   }
 
   #* TRAINING - ALL DATA
-  LearnOut <- learn_dwt(Y = mat)
+  LearnOut <- learn_dwt.2d(Y = mat)
 
   Encode <- LearnOut[["Encode"]]
   Decode <- LearnOut[["Decode"]]
@@ -35,9 +40,10 @@ flf_basissel_dwt <- function(mat, kf, latent_dim_from = 1, latent_dim_to = min(n
   if (verbose) print("====== Training ======")
   for (j in 1:q) { # q is the maximum number of eigenvectors
     if (verbose) print(paste("= Latent Dim. =", breaks[j]))
-    proj_t <- Decode(Ystar = Encode(Y = mat, k = breaks[j]))
+    proj_t <- keras::array_reshape(x = Decode(Ystar = Encode(Y = mat, k = breaks[j])), c(n, p))
     corM_t[j] <- 1 - cor(c(proj_t), c(mat))^2
   }
+
 
   #* CROSS VALIDATION
   if (verbose) print(paste0("====== Performing ", kf, "-fold CV ======="))
@@ -55,29 +61,33 @@ flf_basissel_dwt <- function(mat, kf, latent_dim_from = 1, latent_dim_to = min(n
   PRESS <- c(1:r)
   W <- c(1:(r - 1))
 
-  mat <- mat[sample(n), ] # shuffle
+  mat <- mat[sample(n), , ] # shuffle
   folds <- cut(seq(1, n), breaks = kf, labels = FALSE)
 
   for (i in 1:kf) {
     if (verbose) print(paste("==== Fold ", i, "===="))
     kind <- which(folds == i, arr.ind = TRUE)
-    mati <- mat[kind, ]
-    LearnOut <- learn_dwt(mat[-kind, ])
+    mati <- mat[kind, , ]
+    mati_flattened <- keras::array_reshape(mati, dim = c(length(kind), p))
+    LearnOut <- learn_dwt.2d(mat[-kind, , ])
     Encodev <- LearnOut[["Encode"]]
     Decodev <- LearnOut[["Decode"]]
 
     for (j in 1:r) {
       if (verbose) print(paste("= Latent Dim. =", breaks[j]))
-      proj_v[kind, , j] <- Decodev(Ystar = Encodev(Y = mati, k = breaks[j]))
+      proj_v[kind, , j] <- keras::array_reshape(Decodev(Ystar = Encodev(Y = mati, k = breaks[j])), dim = c(length(kind), p))
       proji <- as.matrix(if (NROW(proj_v[kind, , j]) > NCOL(proj_v[kind, , j]) && (n < p || NROW(proj_v[kind, , j]) == p)) {
         t(proj_v[kind, , j])
       } else {
         proj_v[kind, , j]
       })
-      matir <- if (NROW(mati) < NCOL(mati) || (n > p & NCOL(mati) == p)) as.matrix(t(mati)) else as.matrix(mati)
-      corM_v[j] <- 1 - cor(c(proj_v[, , j]), c(mat))^2
-      PRESS[j] <- norm(as.matrix(proj_v[, , j] - mat), "F")^2
     }
+  }
+
+
+  for (j in 1:r) {
+    corM_v[j] <- 1 - cor(c(proj_v[, , j]), c(mat))^2
+    PRESS[j] <- norm(as.matrix(proj_v[, , j] - mat_flattened), "F")^2
   }
 
 
@@ -85,18 +95,21 @@ flf_basissel_dwt <- function(mat, kf, latent_dim_from = 1, latent_dim_to = min(n
     x <- as.matrix(proj_v[, , l])
     rho_v[, l] <- sapply(
       seq.int(dim(x)[1]),
-      function(i) 1 - cor(as.matrix(x)[i, ], as.matrix(mat)[i, ])^2
+      function(i) 1 - cor(as.matrix(x)[i, ], as.matrix(mat_flattened)[i, ])^2
     )
   }
   rho_v <- matrix(unlist(rho_v), n, r)
 
   # sort rows of correlation matrix
   for (s in 1:ncol(rho_v)) {
-    Qrho_v[, s] <- sort(rho_v[, s])
+    if (all(is.na(rho_v[, s]))) Qrho_v[, s] <- rho_v[, s] else Qrho_v[, s] <- sort(rho_v[, s])
   }
 
+
+  vline <- NA
+
   #* OUTPUT
-  out <- list(corM_t = corM_t, corM_v = corM_v, rho_v = rho_v, Qrho_v = Qrho_v, breaks = breaks, r = r, q = q, n = n, p = p, Encode = Encode, Decode = Decode)
+  out <- list(corM_t = corM_t, rho_v = rho_v, Qrho_v = Qrho_v, vline = vline, breaks = breaks, r = r, q = q, n = n, p = p, Encode = Encode, Decode = Decode)
 }
 
-flf_basissel_dwt <- compiler::cmpfun(flf_basissel_dwt)
+flf_basissel_dwt.2d <- compiler::cmpfun(flf_basissel_dwt.2d)

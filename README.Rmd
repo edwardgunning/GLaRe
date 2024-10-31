@@ -72,9 +72,10 @@ ph_pca <- GLaRe(
   cvqlines = 0.5,
   cutoffcriterion = 0.95,
   cutoffvalue = 0.05,
-  incr = 10,
-  lim = ncol(PH),
-  verbose = FALSE)
+  latent_dim_by = 10,
+  latent_dim_to = ncol(PH),
+  verbose = FALSE
+)
 
 ## autoencoder
 ph_ae <- GLaRe(
@@ -85,10 +86,11 @@ ph_ae <- GLaRe(
   cvqlines = 0.5,
   cutoffcriterion = 0.95,
   cutoffvalue = 0.05,
-  incr = 10,
-  lim = ncol(PH),
+  latent_dim_by = 10,
+  latent_dim_to = ncol(PH),
   ae_args = list(link_fun = "linear", epoch = 50),
-  verbose = FALSE)
+  verbose = FALSE
+)
 
 ## dwt
 ph_dwt <- GLaRe(
@@ -99,9 +101,26 @@ ph_dwt <- GLaRe(
   cvqlines = 0.5,
   cutoffcriterion = 0.95,
   cutoffvalue = 0.05,
-  incr = 10,
-  lim = ncol(PH),
-  verbose = FALSE)
+  latent_dim_by = 10,
+  latent_dim_to = ncol(PH),
+  verbose = FALSE
+)
+```
+
+Look at individual losses distributions:
+```{r, fig.asp = 0.33}
+par(mfrow = c(1, 3))
+distribution_plot(GLaRe_output = ph_pca)
+distribution_plot(GLaRe_output = ph_ae)
+distribution_plot(GLaRe_output = ph_dwt)
+```
+
+Look at the training validation ratios:
+```{r, fig.asp = 0.33}
+par(mfrow = c(1, 3))
+plot_train_validation_ratio(GLaRe_output = ph_pca)
+plot_train_validation_ratio(GLaRe_output = ph_ae)
+plot_train_validation_ratio(GLaRe_output = ph_dwt)
 ```
 
 ## Example: DTI Data
@@ -124,9 +143,10 @@ DTI_pca <- GLaRe(
   cvqlines = 0.5,
   cutoffcriterion = 0.95,
   cutoffvalue = 0.05,
-  incr = 8,
-  lim = nrow(DTI),
-  verbose = FALSE)
+  latent_dim_by = 8,
+  latent_dim_to = nrow(DTI),
+  verbose = FALSE
+)
 
 DTI_ae <- GLaRe(
   mat = DTI,
@@ -136,10 +156,11 @@ DTI_ae <- GLaRe(
   cvqlines = 0.5,
   cutoffcriterion = 0.95,
   cutoffvalue = 0.05,
-  incr = 8,
-  lim = nrow(DTI),
+  latent_dim_by = 8,
+  latent_dim_to = nrow(DTI),
   ae_args = list(link_fun = "linear", epoch = 50),
-  verbose = FALSE)
+  verbose = FALSE
+)
 
 DTI_dwt <- GLaRe(
   mat = DTI,
@@ -149,8 +170,25 @@ DTI_dwt <- GLaRe(
   cvqlines = 0.5,
   cutoffcriterion = 0.95,
   cutoffvalue = 0.05,
-  incr = 8,
-  lim = nrow(DTI), 
-  verbose = FALSE)
+  latent_dim_by = 8,
+  latent_dim_to = nrow(DTI),
+  verbose = FALSE
+)
 ```
 
+
+Look at individual losses distributions:
+```{r, fig.asp = 0.33}
+par(mfrow = c(1, 3))
+distribution_plot(GLaRe_output = DTI_pca)
+distribution_plot(GLaRe_output = DTI_ae)
+distribution_plot(GLaRe_output = DTI_dwt)
+```
+
+Look at the training validation ratios:
+```{r, fig.asp = 0.33}
+par(mfrow = c(1, 3))
+plot_train_validation_ratio(GLaRe_output = DTI_pca)
+plot_train_validation_ratio(GLaRe_output = DTI_ae)
+plot_train_validation_ratio(GLaRe_output = DTI_dwt)
+```

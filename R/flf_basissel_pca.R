@@ -7,7 +7,6 @@
 #'
 #' @examples
 learn_pca <- function(Y) {
-
   n <- nrow(Y) # number of observations
   p <- ncol(Y) # number of variables
 
@@ -43,112 +42,91 @@ learn_pca <- function(Y) {
 #' @export
 #'
 #' @examples
-flf_basissel_pca <- function(mat, kf, lim = min(ncol(mat) - 1, nrow(mat) - 1), incr = 1, verbose = TRUE) {
-  set.seed(123)
+flf_basissel_pca <- function(mat, kf, latent_dim_from = 1, latent_dim_to = min(ncol(mat) - 1, nrow(mat) - 1), latent_dim_by = 1, verbose = TRUE) {
+
   #* SET UP: MATRIX SIZE AND FUNCTIONS
   mat <- as.matrix(mat)
   n <- nrow(mat)
   p <- ncol(mat)
 
-  breaks <- c(seq(1, lim, by = incr))
+  breaks <- seq(latent_dim_from, latent_dim_to, by = latent_dim_by)
   breaks <- breaks[which(breaks <= min(n - 1, p - 1))]
 
-  rep.col <- function(x, n) { # this function repeats a column x n times
-    matrix(rep(x, each = n), ncol = n, byrow = TRUE)
-  }
-
-  # #* REMOVE ROW MEANS
-  # if (center) {
-  #   mat <- as.matrix(mat - rep.col(apply(mat, 1, mean), p))
-  # }
-
-  #* TRAINING - ALL DATA
   LearnOut <- learn_pca(mat)
-
   breaks <- breaks[which(breaks <= ncol(LearnOut[["phi_t"]]))]
   q <- length(breaks)
-
 
   Encode <- LearnOut[["Encode"]]
   Decode <- LearnOut[["Decode"]]
 
-  diff_t <- array(0, c(n, q))
-  corM_t <- rep(0, q)
-  RESS <- rep(0, q)
+  corM_t <- RESS <- vector(mode = "numeric", length = q)
 
-  if(verbose) print("====== Training ======")
+  if (verbose) print("====== Training ======")
   for (j in 1:q) { # q is the maximum number of eigenvectors
-      if(verbose) print(paste("= Latent Dim. =", breaks[j]))
-      proj_t <- Decode(Encode(mat, breaks[j]), breaks[j])
-      corM_t[j] <- 1 - cor(c(proj_t), c(mat))^2
-    }
+    if (verbose) print(paste("= Latent Dim. =", breaks[j]))
+    proj_t <- Decode(Encode(mat, breaks[j]), breaks[j])
+    corM_t[j] <- get_one_minus_squared_correlation(observed = c(mat), predicted = c(proj_t))
+  }
 
   #* CROSS VALIDATION
-  if(verbose) print(paste0("====== Performing ", kf, "-fold CV ======="))
+  if (verbose) print(paste0("====== Performing ", kf, "-fold CV ======="))
 
-  n_cv <- floor(n - n/kf)
+  n_cv <- floor(n - n / kf)
 
   r <- max(which(breaks <= min(n_cv, p)))
 
-  proj_v <- array(0, c(n, p, r))
-
-  rho_v <- array(0, c(n, r))
-  Qrho_v <- array(0, c(n, r))
-  diff_v <- array(0, c(n, r))
-  corM_v <- rep(0, r)
-  PRESS <- c(1:r)
-  W <- c(1:(r - 1))
+  proj_v <- array(NA, c(n, p, q)) # to store the cross-validation predictions
+  rho_v <- array(NA, c(n, q)) # to store the individual observations correlations between cross-validation predictions and data for each latent dimension
+  Qrho_v <- array(NA, c(n, q)) # version of `rho_v` with it's rows sorted separately for each column (for heatmap)
+  PRESS <- corM_v <- vector(mode = "numeric", length = q) # overall/ total correlations/ residual sum of squares between cross-validation predictions and data for each latent dimension
+  PRESS[1:q] <- corM_v[1:q] <- NA
 
   mat <- mat[sample(n), ] # shuffle
   folds <- cut(seq(1, n), breaks = kf, labels = FALSE)
 
   for (i in 1:kf) {
-    if(verbose) print(paste("==== Fold ", i, "===="))
+    # Loop through folds:
+    if (verbose) print(paste("==== Fold ", i, "===="))
     kind <- which(folds == i, arr.ind = TRUE)
     mati <- mat[kind, ]
-    LearnOut <- learn_pca(mat[-kind, ])
-    Encodev <- LearnOut[["Encode"]]
-    Decodev <- LearnOut[["Decode"]]
-
+    LearnOutv <- learn_pca(mat[-kind, ])
+    Encodev <- LearnOutv[["Encode"]]
+    Decodev <- LearnOutv[["Decode"]]
     for (j in 1:r) {
-      if(verbose) print(paste("= Latent Dim. =", breaks[j]))
+      # Loop through Latent Dimension Sizes:
+      if (verbose) print(paste("= Latent Dim. =", breaks[j]))
       proj_v[kind, , j] <- Decodev(Encodev(mati, breaks[j]), breaks[j])
-      proji <- as.matrix(if (NROW(proj_v[kind, , j]) > NCOL(proj_v[kind, , j]) && (n < p || NROW(proj_v[kind, , j]) == p)) {
-        t(proj_v[kind, , j])
-      } else {
-        proj_v[kind, , j]
-      })
-      matir <- if (NROW(mati) < NCOL(mati) || (n > p & NCOL(mati) == p)) as.matrix(t(mati)) else as.matrix(mati)
-      corM_v[j] <- 1 - cor(c(proj_v[, , j]), c(mat))^2
-      PRESS[j] <- norm(as.matrix(proj_v[, , j] - mat), "F")^2
     }
   }
 
+  # Compute Summary Measures on CV Results: ---------------------------------
+  if (verbose) print(paste0("====== Finished ", kf, "-fold CV, Summarising Results ======="))
 
-  for (l in 1:r) {
+  ## Overall Measures  ------------------------------------------------------
+  for (j in seq_len(r)) {
+    corM_v[j] <- get_one_minus_squared_correlation(observed = c(mat), predicted = c(proj_v[, , j]))
+    PRESS[j] <- norm(as.matrix(proj_v[, , j] - mat), type = "F")^2
+  }
+
+  ## Individual-Level Measures ----------------------------------------------
+  for (l in seq_len(r)) {
+    # loop through latent dimension sizes.
     x <- as.matrix(proj_v[, , l])
     rho_v[, l] <- sapply(
       seq.int(dim(x)[1]),
-      function(i) 1 - cor(as.matrix(x)[i, ], as.matrix(mat)[i, ])^2
+      function(i) get_one_minus_squared_correlation(observed = as.matrix(mat)[i, ], predicted = as.matrix(x)[i, ])
     )
   }
-  rho_v <- matrix(unlist(rho_v), n, r)
+  rho_v <- matrix(unlist(rho_v), n, q)
 
-  # sort rows of correlation matrix
-  for (s in 1:ncol(rho_v)) {
+  # Sort rows of correlation matrix
+  for (s in seq_len(r)) {
     Qrho_v[, s] <- sort(rho_v[, s])
   }
 
-  #* W STATISTIC
-  for (m in 2:r) {
-    W[m - 1] <- ((PRESS[m - 1] - PRESS[m]) / (n + p - 2 * m)) / (PRESS[m] / (p * (n - 1) - m * (n + p - m - 1)))
-  }
-  # vertical line at W statistic
-  vline <- ifelse(sum(which(W > 1)) > 0, max(which(W > 1)), 0)
-
 
   #* OUTPUT
-  out <- list(corM_t = corM_t, rho_v = rho_v, Qrho_v = Qrho_v, vline = vline, breaks = breaks, r = r, q = q, n = n, p = p, Encode = Encode, Decode = Decode)
+  out <- list(corM_t = corM_t, corM_v = corM_v, rho_v = rho_v, Qrho_v = Qrho_v, breaks = breaks, r = r, q = q, n = n, p = p, Encode = Encode, Decode = Decode)
 }
 
 flf_basissel_pca <- compiler::cmpfun(flf_basissel_pca)

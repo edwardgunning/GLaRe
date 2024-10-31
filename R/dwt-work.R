@@ -1,21 +1,24 @@
-
 prepare_pad_dwt <- function(Y) {
   p <- ncol(Y)
   log2ppad <- ceiling(log2(p))
   ppad <- 2^log2ppad
   ppad_extra <- ppad - p
-  ppad_left <- ceiling(ppad_extra/2)
-  ppad_right <- floor(ppad_extra/2)
-  if(p != ppad) {
-    Ypad <- cbind(matrix(0, nrow(Y), ncol =  ppad_left), Y, matrix(0, nrow(Y), ncol =  ppad_right))
+  ppad_left <- ceiling(ppad_extra / 2)
+  ppad_right <- floor(ppad_extra / 2)
+  if (p != ppad) {
+    Ypad <- cbind(matrix(0, nrow(Y), ncol = ppad_left), Y, matrix(0, nrow(Y), ncol = ppad_right))
+  } else if (p == ppad) {
+    Ypad <- Y
   }
   list(Ypad = Ypad, ppad = ppad, log2ppad = log2ppad, ppad_left = ppad_left, ppad_right = ppad_right)
 }
 
 
 waveslim_dwt <- function(y) {
-  dwt_obj = waveslim::dwt(x = y, n.levels = log2(length(y)), wf = "la8", boundary = "periodic")
-  lapply(dwt_obj, function(x) {x})
+  dwt_obj <- waveslim::dwt(x = y, n.levels = log2(length(y)), wf = "la8", boundary = "periodic")
+  lapply(dwt_obj, function(x) {
+    x
+  })
 }
 
 waveslim_dwt_to_vec <- function(y) {
@@ -62,7 +65,7 @@ get_Energy_scree <- function(D) {
 threshold_fun <- function(D, scree, k) {
   screeix <- order(scree, decreasing = FALSE) # order coefs by mean energy explained (smallest to largest)
   # ? intuition here is that if rel energy = 1, then all energy has been explained before this coef?
-  Dthresh_inds <- screeix[ - c(1:k)] # remove the k largest scree inds
+  Dthresh_inds <- screeix[-c(1:k)] # remove the k largest scree inds
   D0 <- D
   D0[, Dthresh_inds] <- 0 # set the remainder (i.e., not the k largest scree inds) to zero.
   D0 # return thresholded matrix.
@@ -72,8 +75,8 @@ idwt_vec <- function(d, ppad, ppad_left, ppad_right) {
   dwt_obj_refill <- waveslim::dwt(rep(0, ppad), n.levels = log2(ppad), wf = "la8", boundary = "periodic")
   jinds <- seq_along(dwt_obj_refill[[1]])
   dwt_obj_refill[[1]] <- d[jinds]
-  for(j in 2:length(dwt_obj_refill)) {
-    offset_j <- sum(sapply(dwt_obj_refill[1:(j-1)], length))
+  for (j in 2:length(dwt_obj_refill)) {
+    offset_j <- sum(sapply(dwt_obj_refill[1:(j - 1)], length))
     jinds <- offset_j + seq_along(dwt_obj_refill[[j]])
     dwt_obj_refill[[j]] <- d[jinds]
   }
@@ -108,6 +111,3 @@ learn_dwt <- function(Y) {
 
   list(Encode = Encode, Decode = Decode)
 }
-
-
-

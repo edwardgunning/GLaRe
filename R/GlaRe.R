@@ -7,14 +7,11 @@ transform_correlation_output <- function(out_basissel, cvqlines) {
     minsqcor_cv = apply(out_basissel[["rho_v"]], 2, min),
     meansqcor_cv = apply(out_basissel[["rho_v"]], 2, function(x) sum(x) / (length(x))),
     maxsqcor_cv = apply(out_basissel[["rho_v"]], 2, max),
-    medsqcor_cv = apply(out_basissel[["rho_v"]], 2, function(x) quantile(x, 0.5)),
-    qchoice_cv = apply(out_basissel[["rho_v"]], 2, function(x) quantile(x, cvqlines))
+    medsqcor_cv = apply(out_basissel[["rho_v"]], 2, function(x) quantile(x, 0.5, na.rm = TRUE)),
+    qchoice_cv = apply(out_basissel[["rho_v"]], 2, function(x) quantile(x, cvqlines, na.rm = TRUE))
   )
   cor_df
 }
-
-
-
 
 summary_correlation_plot <- function(out_basisel, cvqlines, r, q, breaks, method_name, qc, cutoffvalue) {
   correlation_df <- transform_correlation_output(out_basisel, cvqlines)
@@ -26,26 +23,26 @@ summary_correlation_plot <- function(out_basisel, cvqlines, r, q, breaks, method
     col = "green",
     lwd = 3,
     lty = 1,
-    panel.first = c(abline(h = 0, lty = 1, col = 'black'), abline(h = 1, lty = 1, col = 'black')),
+    panel.first = c(abline(h = 0, lty = 1, col = "black"), abline(h = 1, lty = 1, col = "black")),
     xlab = "No. of Latent Features",
     ylab = expression(paste("Loss: 1 - Squared Correlation (", 1 - R^2, ")", sep = "")),
     xlim = range(breaks),
     ylim = c(0, 1),
     main = paste("Latent Feature Representation \n Summary:", method_name)
   )
-  lines(x = breaks[1:r], correlation_df[, "minsqcor_cv"], col = "royalblue", lwd = 2, type = "b", pch = 20)
-  lines(x = breaks[1:r], correlation_df[, "meansqcor_cv"], col = "goldenrod", lwd = 2, type = "b", pch = 20)
-  lines(x = breaks[1:r], correlation_df[, "maxsqcor_cv"], col = "red3", lwd = 2, type = "b", pch = 20)
+  lines(x = breaks[seq_len(r)], correlation_df[seq_len(r), "minsqcor_cv"], col = "royalblue", lwd = 2, type = "b", pch = 20)
+  lines(x = breaks[seq_len(r)], correlation_df[seq_len(r), "meansqcor_cv"], col = "goldenrod", lwd = 2, type = "b", pch = 20)
+  lines(x = breaks[seq_len(r)], correlation_df[seq_len(r), "maxsqcor_cv"], col = "red3", lwd = 2, type = "b", pch = 20)
   if (cvqlines == 0.5) {
-    lines(x = breaks[1:r], correlation_df[, "medsqcor_cv"], col = "purple", lwd = 2, type = "b", pch = 20)
+    lines(x = breaks[seq_len(r)], correlation_df[seq_len(r), "medsqcor_cv"], col = "purple", lwd = 2, type = "b", pch = 20)
   } else if (cvqlines != 0.5) {
-    lines(x = breaks[1:r], correlation_df[, "qchoice_cv"], col = "purple", lwd = 2, type = "b", pch = 20)
+    lines(x = breaks[seq_len(r)], correlation_df[seq_len(r), "qchoice_cv"], col = "purple", lwd = 2, type = "b", pch = 20)
   }
 
-  if(!is.na(qc)) {
+  if (!is.na(qc)) {
     abline(v = qc, lty = 2, col = "grey")
     abline(h = cutoffvalue, lty = 2, col = "grey")
-    axis(side = 1, at = c(qc), labels = paste0("qc = ", qc), col = "darkgrey",font = 4,lwd = 3, padj = 1.2)
+    axis(side = 1, at = c(qc), labels = paste0("qc = ", qc), col = "darkgrey", font = 4, lwd = 3, padj = 1.2)
   }
 
 
@@ -85,8 +82,9 @@ summary_correlation_plot <- function(out_basisel, cvqlines, r, q, breaks, method
 #' @examples
 GLaRe <- function(
     mat = iris[, 1:4],
-    lim = min(ncol(mat) - 1, nrow(mat) - 1),
-    incr = 1,
+    latent_dim_from = 1,
+    latent_dim_to = min(ncol(mat) - 1, nrow(mat) - 1),
+    latent_dim_by = 1,
     learn = "pca",
     method_name = toupper(learn),
     kf = 5,
@@ -96,20 +94,20 @@ GLaRe <- function(
     cutoffcriterion = 0.5,
     cutoffvalue = 0.9,
     verbose = TRUE) {
-
-
-  # Principal Components Analysis -------------------------------------------
+  print(paste("*** Learning Method:", learn, "***"))
   if (learn == "pca") {
-    out <- flf_basissel_pca(mat = mat, kf = kf, lim = lim, incr = incr, verbose = verbose)
+    out <- flf_basissel_pca(mat = mat, kf = kf, latent_dim_from = 1, latent_dim_to = latent_dim_to, latent_dim_by = latent_dim_by, verbose = verbose)
   } else if (learn == "ae") {
-    out <- flf_basissel_ae(mat = mat, kf = kf, lim = lim, incr = incr, ae_args = ae_args, verbose = verbose)
+    out <- flf_basissel_ae(mat = mat, kf = kf, latent_dim_from = 1, latent_dim_to = latent_dim_to, latent_dim_by = latent_dim_by, ae_args = ae_args, verbose = verbose)
   } else if (learn == "dwt") {
-    out <- flf_basissel_dwt(mat = mat, kf = kf, lim = lim, incr = incr, verbose = verbose)
+    out <- flf_basissel_dwt(mat = mat, kf = kf, latent_dim_from = 1, latent_dim_to = latent_dim_to, latent_dim_by = latent_dim_by, verbose = verbose)
+  } else if (learn == "dwt.2d") {
+    out <- flf_basissel_dwt.2d(mat = mat, kf = kf, latent_dim_from = 1, latent_dim_to = latent_dim_to, latent_dim_by = latent_dim_by, verbose = verbose)
   }
 
- # else {
- #  #   out <- flf_basissel_user(mat, learn_user, kf, center, scale, ...)
- #  # }
+  # else {
+  #  #   out <- flf_basissel_user(mat, learn_user, kf, center, scale, ...)
+  #  # }
   n <- nrow(mat)
   p <- ncol(mat)
   q <- out[["q"]]
@@ -118,8 +116,8 @@ GLaRe <- function(
 
 
   # Qualifying Criterion and Add to plot: -----------------------------------
-  cutoff_criterion_quantiles <- apply(out[["rho_v"]], 2, function(x) quantile(x, cutoffcriterion))
-  if(!any(cutoff_criterion_quantiles <= cutoffvalue)) {
+  cutoff_criterion_quantiles <- apply(out[["rho_v"]][, seq_len(r)], 2, function(x) quantile(x, cutoffcriterion, na.rm = TRUE))
+  if (!any(cutoff_criterion_quantiles <= cutoffvalue)) {
     warning("No qualifying criterion found, try adjusting parameters.")
     qc <- NA
   } else {
@@ -132,15 +130,18 @@ GLaRe <- function(
 
 
   # Heatmap: ----------------------------------------------------------------
-  p2 <- plotly::plot_ly(x = breaks,
-                        y = seq(0, 1, length.out = n),
-                        z = out$Qrho_v,
-                        type = "heatmap", colors = "RdYlGn",
+  p2 <- plotly::plot_ly(
+    x = breaks,
+    y = seq(0, 1, length.out = n),
+    z = out$Qrho_v,
+    type = "heatmap", colors = "RdYlGn",
   ) %>%
-    plotly::layout(title = 'Squared Correlation Heatmap',
-                   xaxis = list(title = "No. of Latent Features"),
-                   yaxis = list(title = "Quantile of Observations"),
-                   legend = list(orientation = 'h'))
+    plotly::layout(
+      title = "Squared Correlation Heatmap",
+      xaxis = list(title = "No. of Latent Features"),
+      yaxis = list(title = "Quantile of Observations"),
+      legend = list(orientation = "h")
+    )
 
   out$qc <- qc
   out$heatmap <- p2

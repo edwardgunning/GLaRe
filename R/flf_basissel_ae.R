@@ -9,14 +9,13 @@
 #' @importFrom magrittr "%>%"
 
 learn_ae <- function(Y, k, ae_args) {
-
   # unpack arguments:
   layer_1_dim <- ifelse(is.null(ae_args[["layer_1_dim"]]), 600, ae_args[["layer_1_dim"]])
   layer_2_dim <- ifelse(is.null(ae_args[["layer_2_dim"]]), 200, ae_args[["layer_2_dim"]])
   link_fun <- ifelse(is.null(ae_args[["link_fun"]]), "sigmoid", ae_args[["link_fun"]])
   epochs <- ifelse(is.null(ae_args[["epochs"]]), 100, ae_args[["epochs"]])
   loss <- ifelse(is.null(ae_args[["loss"]]), "mean_squared_error", ae_args[["loss"]])
-  batch_size <-  ifelse(is.null(ae_args[["batch_size"]]), 16, ae_args[["batch_size"]])
+  batch_size <- ifelse(is.null(ae_args[["batch_size"]]), 16, ae_args[["batch_size"]])
 
 
   if (!(link_fun %in% c("sigmoid", "linear"))) stop("Link function must be either linear or sigmoid.")
@@ -65,14 +64,14 @@ learn_ae <- function(Y, k, ae_args) {
 #' @export
 #'
 #' @examples
-flf_basissel_ae <- function(mat, kf, lim = lim, incr = incr, ae_args = list(), verbose = TRUE) { # check default for breaks
+flf_basissel_ae <- function(mat, kf, latent_dim_from = 1, latent_dim_to = min(ncol(mat) - 1, nrow(mat) - 1), latent_dim_by = latent_dim_by, ae_args = list(), verbose = TRUE) { # check default for breaks
 
   #* SET UP: MATRIX SIZE AND FUNCTIONS
   n <- nrow(mat)
   p <- ncol(mat)
 
   #* TRAINING - ALL DATA
-  breaks <- c(seq(1, lim, by = incr))
+  breaks <- seq(latent_dim_from, latent_dim_to, by = latent_dim_by)
   breaks <- breaks[which(breaks <= min(n - 1, p - 1))]
   q <- r <- length(breaks)
 
@@ -81,9 +80,9 @@ flf_basissel_ae <- function(mat, kf, lim = lim, incr = incr, ae_args = list(), v
   RESS <- rep(0, q)
   mse <- rep(0, q)
 
-  if(verbose) print("====== Training ======")
+  if (verbose) print("====== Training ======")
   for (j in 1:q) {
-    if(verbose) print(paste("= Latent Dim. =", breaks[j]))
+    if (verbose) print(paste("= Latent Dim. =", breaks[j]))
     learnout_j <- learn_ae(Y = mat, k = breaks[j], ae_args = ae_args)
     Encode_j <- learnout_j[["Encode"]]
     Decode_j <- learnout_j[["Decode"]]
@@ -92,7 +91,7 @@ flf_basissel_ae <- function(mat, kf, lim = lim, incr = incr, ae_args = list(), v
   }
 
   #* CROSS VALIDATION
-  if(verbose) print(paste0("====== Performing ", kf, "-fold CV ======="))
+  if (verbose) print(paste0("====== Performing ", kf, "-fold CV ======="))
   proj_v <- array(0, c(n, p))
   # r <- ifelse(n < p, max(floor(q-q/kf), 2), q)
   # r <- ifelse(r<10, r, 10)
@@ -108,12 +107,12 @@ flf_basissel_ae <- function(mat, kf, lim = lim, incr = incr, ae_args = list(), v
   folds <- cut(seq(1, n), breaks = kf, labels = FALSE)
 
   for (i in 1:kf) {
-    if(verbose) print(paste("==== Fold ", i, "===="))
+    if (verbose) print(paste("==== Fold ", i, "===="))
     kind <- which(folds == i, arr.ind = TRUE)
     mati <- mat[kind, ]
 
     for (j in 1:r) {
-      if(verbose) print(paste("= Latent Dim. =", breaks[j]))
+      if (verbose) print(paste("= Latent Dim. =", breaks[j]))
       learnout_v_j <- learn_ae(mat[-kind, ], k = breaks[j], ae_args = ae_args)
       Encode <- learnout_v_j[["Encode"]]
       Decode <- learnout_v_j[["Decode"]]
@@ -140,8 +139,5 @@ flf_basissel_ae <- function(mat, kf, lim = lim, incr = incr, ae_args = list(), v
   }
 
   vline <- 0
-  out <- list(breaks = breaks, corM_t = corM_t, rho_v = rho_v, Qrho_v = Qrho_v, vline = vline, r = r, n = n, p = p, Encode = Encode, Decode = Decode)
+  out <- list(breaks = breaks, corM_t = corM_t, corM_v = corM_v,  rho_v = rho_v, Qrho_v = Qrho_v, vline = vline, r = r, n = n, p = p, Encode = Encode, Decode = Decode)
 }
-
-
-
