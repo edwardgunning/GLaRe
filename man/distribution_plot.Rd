@@ -6,6 +6,9 @@
 \usage{
 distribution_plot(GLaRe_output, jitter = 0.2, cex = 1)
 }
+\arguments{
+\item{GLaRe_output}{the object returned from a call to the `GLaRE()` function.}
+}
 \description{
 Plot the full distribution of individual validation losses.
 }

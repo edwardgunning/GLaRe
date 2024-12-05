@@ -6,6 +6,9 @@
 \usage{
 plot_train_validation_ratio(GLaRe_output)
 }
+\arguments{
+\item{GLaRe_output}{the object returned from a call to the `GLaRE()` function.}
+}
 \description{
 Plot the ratio of the average training loss to the average validation loss.
 }

@@ -84,21 +84,19 @@ idwt.2d_array <- function(D, ppad, ppad_left, ppad_right, qpad, qpad_left, qpad_
 }
 
 
-#' 2-D DWT latent feature learning function.
+#' Learning function for 2-D DWT.
 #' @param Y an n times p data matrix.
 #'
 #' @return
 #' @export
 #'
 #' @examples
-learn_dwt.2d <- function(Y) {
-  if (!length(dim(Y)) == 3) {
-    stop("Y must be a 3-dimensional array, where each slice is an image.")
-  }
-  Y_dims <- dim(Y)
-  n <- Y_dims[1]
-  p <- Y_dims[2]
-  q <- Y_dims[3]
+learn_dwt.2d <- function(Y, p1, p2) {
+
+  stopifnot(ncol(Y) == p1 * p2)
+  n <- nrow(Y)
+  Y <- array(Y, dim = c(n, p1, p2))
+
   Ypad_obj <- prepare_pad_dwt.2d(Y = Y)
   Ypad <- Ypad_obj$Ypad
   ppad <- Ypad_obj$ppad
@@ -111,19 +109,20 @@ learn_dwt.2d <- function(Y) {
   scree <- get_Energy_scree(D = D_train)
 
   Encode <- function(Y, k) {
+    Y <- array(Y, dim = c(nrow(Y), p1, p2))
     Ypad <- prepare_pad_dwt.2d(Y = Y)$Ypad
     D <- waveslim_dwt.2d_to_mat(Y = Ypad)
     threshold_fun(D = D, scree = scree, k = k)
   }
 
   Decode <- function(Ystar) {
-    idwt.2d_array(
+    arr_return <- idwt.2d_array(
       D = Ystar,
       ppad = ppad, ppad_left = ppad_left, ppad_right = ppad_right,
       qpad = qpad, qpad_left = qpad_left, qpad_right = qpad_right,
-      p = p, q = q
+      p = p1, q = p2
     )
+    matrix(arr_return, nrow = nrow(Ystar), ncol = p1 * p2)
   }
-
   list(Encode = Encode, Decode = Decode)
 }

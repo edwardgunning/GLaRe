@@ -1,3 +1,6 @@
+#' Pad a signal to dyadic length for 1-D DWT with 0's each side.
+#'
+#' @param Y an N times T data matrix containing N replicate observations of a T-dimensional signal in its rows.
 prepare_pad_dwt <- function(Y) {
   p <- ncol(Y)
   log2ppad <- ceiling(log2(p))
@@ -13,7 +16,8 @@ prepare_pad_dwt <- function(Y) {
   list(Ypad = Ypad, ppad = ppad, log2ppad = log2ppad, ppad_left = ppad_left, ppad_right = ppad_right)
 }
 
-
+#' Apply DWT to a 1-D signal and return the wavelet coefficients as a list.
+#' @param y a vector conatining the 1-D signal, must be of dyadic length.
 waveslim_dwt <- function(y) {
   dwt_obj <- waveslim::dwt(x = y, n.levels = log2(length(y)), wf = "la8", boundary = "periodic")
   lapply(dwt_obj, function(x) {
@@ -21,15 +25,18 @@ waveslim_dwt <- function(y) {
   })
 }
 
+#' Apply DWT to a 1-D signal and return the wavelet coefficients as a vector.
+#' @param y a vector conatining the 1-D signal, must be of dyadic length.
 waveslim_dwt_to_vec <- function(y) {
   dwt_list <- waveslim_dwt(y)
   unlist(dwt_list)
 }
 
+#' Apply DWT to a a matrix of n 1-D signals and return the wavelet coefficients as a matrix.
+#' @param Y an N times T data matrix containing N replicate observations of a T-dimensional signal in its rows. T must be dyadic length.
 waveslim_dwt_to_mat <- function(Y) {
   t(apply(Y, 1, waveslim_dwt_to_vec))
 }
-
 
 #' Compute relative energy for a general wavelet coefficient matrix.
 #'
@@ -64,7 +71,7 @@ get_Energy_scree <- function(D) {
 
 threshold_fun <- function(D, scree, k) {
   screeix <- order(scree, decreasing = FALSE) # order coefs by mean energy explained (smallest to largest)
-  # ? intuition here is that if rel energy = 1, then all energy has been explained before this coef?
+  # intuition here is that if rel energy = 1, then all energy has been explained before this coef.
   Dthresh_inds <- screeix[-c(1:k)] # remove the k largest scree inds
   D0 <- D
   D0[, Dthresh_inds] <- 0 # set the remainder (i.e., not the k largest scree inds) to zero.
@@ -87,7 +94,10 @@ idwt_mat <- function(D, ppad, ppad_left, ppad_right) {
   t(apply(D, 1, idwt_vec, ppad = ppad, ppad_left = ppad_left, ppad_right = ppad_right))
 }
 
-
+#' Learning function for 1-D DWT.
+#'
+#' @param Y an n times p data matrix.
+#'
 learn_dwt <- function(Y) {
   n <- nrow(Y)
   p <- ncol(Y)

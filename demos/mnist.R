@@ -2,56 +2,39 @@ library(GLarE)
 mnist <- keras::dataset_mnist()
 ## normalize so the range is (0,1)
 x_train <- mnist$train$x/255
+# n <- nrow(x_train)
+# x_train <- x_train[1:n,,]
+x_train_flattened <- matrix(x_train, nrow(x_train), 784)
+mnist_pca <- readRDS( "demos/mnist_pca.rds")
+mnist_pca$qc
+plot_mnist_reconstruction(GLaRe_output = mnist_pca, y = x_train_flattened[2,])
 
-tst_learn <- learn_dwt.2d(Y = x_train[1:100,,])
-D_thresh <-
-Yhat <- tst_learn$Decode(Ystar = tst_learn$Encode(Y = x_train[1:100,, ], k = 32 * ))
+par(mfrow = c(1, 2), cex = 0.5)
 
-
-par(mfrow = c(1, 2))
-image(x_train[10,,])
-image(tst_learn$Decode(Ystar = tst_learn$Encode(Y = x_train[1:100,, ], k = 2))[10,, ])
-
-
-
-dwt.2d_GLaRE <- GLaRe(mat = x_train[1:100,,],
-                      lim = 100,
-                      incr = 10,
+mnist_dwt.2d <- GLaRe(mat = x_train,
+                      latent_dim_from = 1,
+                      latent_dim_to = 400,
+                      latent_dim_by = 20,
                       learn = "dwt.2d",
                       kf = 5,
                       sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
                       cvqlines = 0.5,
-                      cutoffcriterion = 0.05,
-                      cutoffvalue = 0.95,
+                      cutoff_criterion = 0.95,
+                      tolerance_level = 0.05,
                       verbose = TRUE)
 
+mnist_pca <- GLaRe(mat = x_train_flattened,
+                latent_dim_from = 1,
+                latent_dim_to = 1000,
+                latent_dim_by = 100,
+                learn = "pca",
+                kf = 5,
+                sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
+                cvqlines = 0.5,
+                cutoff_criterion = 0.95,
+                tolerance_level = 0.05,
+                verbose = TRUE)
+saveRDS(object = mnist_pca, file = "demos/mnist_pca.rds")
 
-options(error = recover)
 
-par(mfrow = c(1, 2), cex = 0.5)
-pca_glare <- GLaRe(
-  mat = x_train,
-  learn = "pca",
-  kf = 5,
-  sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
-  cvqlines = 0.5,
-  cutoffcriterion = 0.05,
-  cutoffvalue = 0.95,
-  incr = 10,
-  lim = 150,
-  verbose = TRUE)
-
-ae_glare <- GLaRe(
-  mat = x_train,
-  learn = "autoencoder",
-  kf = 5,
-  sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
-  cvqlines = 0.5,
-  cutoffcriterion = 0.05,
-  cutoffvalue = 0.95,
-  incr = 10,
-  lim = 150,
-  ae_args = list(link_fun = "sigmoid", epoch = 50, loss = "binary_crossentropy"))
-
-save.image(file = "demos/mnist.rda")
 

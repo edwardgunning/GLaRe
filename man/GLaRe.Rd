@@ -2,39 +2,51 @@
 % Please edit documentation in R/GlaRe.R
 \name{GLaRe}
 \alias{GLaRe}
-\title{Assess losslessness of a latent feature representation tool.}
+\title{Assess losslessness of a latent feature representation method using k-fold cross-validation.}
 \usage{
 GLaRe(
   mat = iris[, 1:4],
-  lim = min(ncol(mat) - 1, nrow(mat) - 1),
-  incr = 1,
+  latent_dim_from = 1,
+  latent_dim_to = min(ncol(mat) - 1, nrow(mat) - 1),
+  latent_dim_by = 1,
   learn = "pca",
+  method_name = toupper(learn),
   kf = 5,
-  sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
-  cvqlines = 0.5,
+  cvqlines = 0.9,
   ae_args = list(),
-  cutoffcriterion = 0.5,
-  cutoffvalue = 0.9,
+  tolerance_level = 0.05,
+  cutoff_criterion = 0.95,
+  learn_function = NULL,
   verbose = TRUE
 )
 }
 \arguments{
 \item{mat}{An n-by-p data matrix (n observations, p variables).}
 
-\item{learn}{The latent feature representation chosen, defaults to principal component analysis (PCA).}
+\item{latent_dim_from}{An integer used to define the start of the sequence of the number of latent features to be defined as `seq(from = latent_dim_from, to = latent_dim_to, by = latent_dim_by)`, defaults to 1.}
 
-\item{kf}{The number of folds for the k-fold cross-validation.}
+\item{latent_dim_to}{An integer used to define the end of the sequence of the number of latent features to be defined as `seq(from = latent_dim_from, to = latent_dim_to, by = latent_dim_by)` defaults to `min(ncol(mat) - 1, nrow(mat) - 1)`.}
 
-\item{sqcorrel}{Quantiles of the training and test squared correlation to return.}
+\item{latent_dim_by}{An integer used to define the increment of the sequence of the number of latent features to be defined as `seq(from = latent_dim_from, to = latent_dim_to, by = latent_dim_by)`, defaults to 1.}
 
-\item{cvqlines}{The user-specified quantile of the cross-validated squared correlation to display on the plot.}
+\item{learn}{The latent feature representation method chosen, one of c("pca", "dwt", "dwt.2d", "ae", "user"). Defaults to "pca" for principal component analysis (PCA).}
 
-\item{cutoffvalue}{}
+\item{method_name}{The name of the method to be featured on the plot title. Defaults to `toupper(learn)`.}
 
-\item{center}{Whether or not the data should be mean-centered prior to performing the latent feature transformation.}
+\item{kf}{An integer defining the number of folds for the k-fold cross-validation.}
 
-\item{scale}{Whether the data should be scaled prior to analysis, so that each variable has standard deviation 1.}
+\item{cvqlines}{The user-specified quantile of the cross-validated loss distribution to display on the plot.}
+
+\item{ae_args}{Only to be specified if `learn = "ae"`, a list containing the following named elements to define the architecture and training: `layer_1_dim`, `layer_2_dim`, `link_fun`, `epochs`, `loss` and `batch_size`.}
+
+\item{tolerance_level}{A (typically small) value that we want a quantile (defined by `cutoff_criterion`) of our individual cross-validated losses to be less than (called $\epsilon$ in paper). For example, `tolerance_level = 0.05` and `cutoff_criterion = 0.95` means that we would want 95\% of individual cross-validated losses to be below 0.05. Defaults to 0.05.}
+
+\item{cutoff_criterion}{A (typically large) quantile (called $\alpha$ in paper) such that we want this quantile of individual cross-validated losses to be less than the value defined by `tolerance_level`. For example, `tolerance_level = 0.05` and `cutoff_criterion = 0.95` means that we would want 95\% of individual cross-validated losses to be below 0.05. Defaults to 0.05.}
+
+\item{learn_function}{a function only to be supplied if `learn = user`, a user-defined function that takes arguments `Y` (data matrix) and `k` (latent dimension) and returns a list containing two elements `Encode` and `Decode` which define the custom encoding and decoding transformations, respectively.}
+
+\item{verbose}{logical, whether to print output to console during training and cross-validation. Defaults to `TRUE`.}
 }
 \description{
-Assess losslessness of a latent feature representation tool.
+Assess losslessness of a latent feature representation method using k-fold cross-validation.
 }
