@@ -5,7 +5,7 @@ transform_correlation_output <- function(out_basissel, cvqlines, cutoff_criterio
   cor_df <- data.frame(
     meansqcor_t = out_basissel[["corM_t"]],
     minsqcor_cv = apply(out_basissel[["rho_v"]], 2, min),
-    meansqcor_cv = apply(out_basissel[["rho_v"]], 2, function(x) sum(x) / (length(x))),
+    meansqcor_cv = out_basissel[["corM_v"]],
     maxsqcor_cv = apply(out_basissel[["rho_v"]], 2, max),
     medsqcor_cv = apply(out_basissel[["rho_v"]], 2, function(x) quantile(x, 0.5, na.rm = TRUE)),
     qchoice_cv = apply(out_basissel[["rho_v"]], 2, function(x) quantile(x, cvqlines, na.rm = TRUE)),

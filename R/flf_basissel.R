@@ -85,9 +85,17 @@ flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_di
       Encode_j <- learnout_j[["Encode"]]
       Decode_j <- learnout_j[["Decode"]]
       proj_t <- Decode_j(Encode_j(mat))
+      # clear memory
+      rm(learnout_j)
+      rm(Encode_j)
+      rm(Decode_j)
     }
     corM_t[j] <- loss_function(observed = c(mat), predicted = c(proj_t))
   }
+
+  # clear memory
+  gc(verbose = FALSE)
+
 
   # Do Cross-Validation: ----------------------------------------------------
   if (verbose) print(paste0("====== Performing ", kf, "-fold CV ======="))
@@ -116,9 +124,9 @@ flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_di
     # Loop through folds:
     if (verbose) print(paste("==== Fold ", i, "===="))
     kind <- which(folds == i, arr.ind = TRUE)
-    mati <- mat[kind, ]
+    mati <- mat[kind,, drop = FALSE]
     if (learn %in% c("pca", "dwt", "dwt.2d")) {
-      LearnOutv <- learn_function(Y = mat[-kind, ])
+      LearnOutv <- learn_function(Y = mat[-kind,, drop = FALSE])
       Encodev <- LearnOutv[["Encode"]]
       Decodev <- LearnOutv[["Decode"]]
     }
@@ -128,10 +136,13 @@ flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_di
       if (learn %in% c("pca", "dwt", "dwt.2d")) {
         proj_v[kind, , j] <- Decodev(Encodev(Y = mati, k = breaks[j]))
       } else {
-        learnout_v_j <- learn_function(Y = mat[-kind, ], k = breaks[j])
+        learnout_v_j <- learn_function(Y = mat[-kind,, drop = FALSE], k = breaks[j])
         Encode <- learnout_v_j[["Encode"]]
         Decode <- learnout_v_j[["Decode"]]
         proj_v[kind, , j] <- Decode(Encode(mati))
+        rm(learnout_v_j)
+        rm(Encode)
+        rm(Decode)
       }
     }
   }
@@ -166,5 +177,5 @@ flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_di
   }
 
   # Return output in list: --------------------------------------------------
-  list(corM_t = corM_t, corM_v = corM_v, rho_v = rho_v, Qrho_v = Qrho_v, breaks = breaks, n = n, p = p, r = r, q = q, n = n, p = p, Encode = Encode, Decode = Decode)
+  list(corM_t = corM_t, corM_v = corM_v, rho_v = rho_v, Qrho_v = Qrho_v, breaks = breaks, n = n, p = p, r = r, q = q, n = n, p = p)
 }

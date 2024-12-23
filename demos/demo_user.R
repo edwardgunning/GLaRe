@@ -27,7 +27,7 @@ DTI <- na.omit(DTI)
 DTI_user <- GLaRe(
   mat = DTI,
   learn = "user",
-  kf = 2,
+  kf = 15,
   cvqlines = 0.9,
   cutoff_criterion = 0.95,
   tolerance_level = 0.05,

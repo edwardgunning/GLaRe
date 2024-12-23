@@ -177,3 +177,10 @@ plot_1D_reconstruction <- function(GLaRe_output, Y) {
   matlines(y = t(recon), type = "l", lty = 3)
   legend("topright", legend = c("Data", "Reconstruction"), lty = c(1, 3), col = 1)
 }
+
+
+
+plot_gel <- function(y) {
+  image(x = seq(0, 1, length.out = 861), y = seq(0, 1, length.out = 646),  z = y, col = topo.colors(10), xlab = NA, ylab = NA)
+}
+
