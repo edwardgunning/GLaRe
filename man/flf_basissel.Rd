@@ -10,7 +10,7 @@ flf_basissel(
   ae_args,
   kf,
   latent_dim_from = 1,
-  latent_dim_to = min(ncol(mat) - 1, nrow(mat) - 1),
+  latent_dim_to = min(ncol(mat), nrow(mat) - 1),
   latent_dim_by = 1,
   loss_function = get_one_minus_squared_correlation,
   learn_function = NULL,

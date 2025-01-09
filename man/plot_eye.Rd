@@ -6,6 +6,9 @@
 \usage{
 plot_eye(y)
 }
+\arguments{
+\item{y}{a 14400-dimensional vector comprising measurements of MPS along `theta = rep(seq(0, 360, length.out = 120)`, each = 120) and `phi = rep(seq(9, 24, length.out = 120), times = 120)`.}
+}
 \description{
 Plot the eye glaucoma data.
 }

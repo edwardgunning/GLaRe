@@ -118,9 +118,14 @@ learn_dwt.2d <- function(Y, p1, p2) {
   Decode <- function(Ystar) {
     arr_return <- idwt.2d_array(
       D = Ystar,
-      ppad = ppad, ppad_left = ppad_left, ppad_right = ppad_right,
-      qpad = qpad, qpad_left = qpad_left, qpad_right = qpad_right,
-      p = p1, q = p2
+      ppad = ppad,
+      ppad_left = ppad_left,
+      ppad_right = ppad_right,
+      qpad = qpad,
+      qpad_left = qpad_left,
+      qpad_right = qpad_right,
+      p = p1,
+      q = p2
     )
     matrix(arr_return, nrow = nrow(Ystar), ncol = p1 * p2)
   }

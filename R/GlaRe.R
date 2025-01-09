@@ -60,7 +60,8 @@ summary_correlation_plot <- function(out_basisel, cvqlines, cutoff_criterion, r,
     ),
     col = c("blue", "goldenrod", "purple", "red3", "green", "grey"),
     lty = c(1, 1, 1, 1, 1, 2),
-    lwd = c(2, 2, 2, 2, 2, 2, 2)
+    lwd = c(2, 2, 2, 2, 2, 2, 2),
+    bg = "white"
   )
 }
 
@@ -75,7 +76,7 @@ summary_correlation_plot <- function(out_basisel, cvqlines, cutoff_criterion, r,
 #' @param kf An integer defining the number of folds for the k-fold cross-validation.
 #' @param method_name The name of the method to be featured on the plot title. Defaults to `toupper(learn)`.
 #' @param cvqlines The user-specified quantile of the cross-validated loss distribution to display on the plot.
-#' @param ae_args Only to be specified if `learn = "ae"`, a list containing the following named elements to define the architecture and training: `layer_1_dim`, `layer_2_dim`, `link_fun`, `epochs`, `loss` and `batch_size`.
+#' @param ae_args Only to be specified if `learn = "ae"`, a list containing the following named elements to define the architecture and training: `layer_1_dim`, `link_fun`, `epochs`, `loss` and `batch_size`.
 #' @param tolerance_level A (typically small) value that we want a quantile (defined by `cutoff_criterion`) of our individual cross-validated losses to be less than (called $\epsilon$ in paper). For example, `tolerance_level = 0.05` and `cutoff_criterion = 0.95` means that we would want 95\% of individual cross-validated losses to be below 0.05. Defaults to 0.05.
 #' @param cutoff_criterion A (typically large) quantile (called $\alpha$ in paper) such that we want this quantile of individual cross-validated losses to be less than the value defined by `tolerance_level`. For example, `tolerance_level = 0.05` and `cutoff_criterion = 0.95` means that we would want 95\% of individual cross-validated losses to be below 0.05. Defaults to 0.05.
 #' @param learn_function a function only to be supplied if `learn = user`, a user-defined function that takes arguments `Y` (data matrix) and `k` (latent dimension) and returns a list containing two elements `Encode` and `Decode` which define the custom encoding and decoding transformations, respectively.
@@ -88,9 +89,9 @@ summary_correlation_plot <- function(out_basisel, cvqlines, cutoff_criterion, r,
 #'
 #' @examples
 GLaRe <- function(
-    mat = iris[, 1:4],
+    mat = as.matrix(glaucoma_data),
     latent_dim_from = 1,
-    latent_dim_to = min(ncol(mat) - 1, nrow(mat) - 1),
+    latent_dim_to = min(ncol(mat), nrow(mat) - 1),
     latent_dim_by = 1,
     learn = "pca",
     method_name = toupper(learn),
@@ -103,7 +104,9 @@ GLaRe <- function(
     verbose = TRUE) {
 
   # start:
-  print(paste("*** Learning Method:", learn, "***"))
+  if(verbose) {
+    print(paste("*** Learning Method:", learn, "***"))
+  }
   # apply training and cross validation for basis selection:
   out <- flf_basissel(mat = mat, learn = learn, kf = kf, latent_dim_from = latent_dim_from, latent_dim_to = latent_dim_to, latent_dim_by = latent_dim_by, ae_args = ae_args, learn_function = learn_function, verbose = verbose)
   n <- out[["n"]]
@@ -112,7 +115,7 @@ GLaRe <- function(
   breaks <- out[["breaks"]]
 
   # Qualifying Criterion and Add to plot: -----------------------------------
-  cutoff_criterion_quantiles <- apply(out[["rho_v"]][, seq_len(r)], 2, function(x) quantile(x, cutoff_criterion, na.rm = TRUE))
+  cutoff_criterion_quantiles <- apply(out[["rho_v"]][, seq_len(r), drop = FALSE], 2, function(x) quantile(x, cutoff_criterion, na.rm = TRUE))
   if (!any(cutoff_criterion_quantiles <= tolerance_level)) {
     warning("No qualifying criterion found, try adjusting parameters.")
     qc <- NA
@@ -137,15 +140,72 @@ GLaRe <- function(
  heat_map <- plotly::plot_ly(
     x = breaks,
     y = seq(0, 1, length.out = n),
-    z = out$Qrho_v,
-    type = "heatmap", colors = "RdYlGn",
+    z = log10(out$Qrho_v),
+    type = "heatmap",
+    colors = "RdYlGn",
   ) %>%
     plotly::layout(
-      title = "Squared Correlation Heatmap",
+      # title = "Squared Correlation Heatmap",
       xaxis = list(title = "No. of Latent Features"),
       yaxis = list(title = "Quantile of Observations"),
       legend = list(orientation = "h")
+    ) %>%
+    plotly::colorbar(
+      title = "Loss",
+      tickvals = log10(10^seq(0, -10, by = -1)),
+      ticktext = 10^seq(0, -10, by = -1),
+      side = "bottom"
     )
+
+
+
+  # Return Decode and Encode: -----------------------------------------------
+  # Only if qualifying criterion is met:
+  if(!is.na(qc)) {
+    if(verbose) {
+      print("Final training of Model at qualifying criterion:")
+    }
+
+    if(learn == "dwt.2d") {
+    arr <- mat
+    arr_dims <- dim(arr)
+    n <- arr_dims[1]
+    p1 <- arr_dims[2]
+    p2 <- arr_dims[3]
+    p <- p1 * p2
+    mat <- matrix(arr, nrow = n, ncol = p)
+    }
+
+    if (learn == "pca") {
+      learn_function <- learn_pca
+    } else if (learn == "dwt") {
+      learn_function <- learn_dwt
+    } else if (learn == "dwt.2d") {
+      learn_function <- function(Y) {
+        learn_dwt.2d(Y = Y, p1 = p1, p2 = p2)
+      }
+    } else if (learn == "ae") {
+      learn_function <- function(Y, k) {
+        learn_ae(Y = Y, k = k, ae_args = ae_args)
+      }
+    }
+
+    if (learn %in% c("pca", "dwt", "dwt.2d")) {
+      learn_final <- learn_function(mat)
+      out[["Encode"]] <- function(Y) {
+        learn_final[["Encode"]](Y = Y, k = qc)
+      }
+    } else {
+      learn_final <- learn_function(Y = mat, k = qc)
+      out[["Encode"]] <- learn_final[["Encode"]]
+    }
+
+    out[["Decode"]] <- learn_final[["Decode"]]
+
+  } else if(is.na(qc)){
+    out[["Encode"]] <- NA
+    out[["Decode"]] <- NA
+  }
 
   out$qc <- qc
   out$heatmap <- heat_map

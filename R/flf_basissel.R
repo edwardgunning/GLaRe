@@ -8,7 +8,7 @@
 #' @export
 #'
 #' @examples
-flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_dim_to = min(ncol(mat) - 1, nrow(mat) - 1), latent_dim_by = 1, loss_function = get_one_minus_squared_correlation, learn_function = NULL, verbose = TRUE) {
+flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_dim_to = min(ncol(mat), nrow(mat) - 1), latent_dim_by = 1, loss_function = get_one_minus_squared_correlation, learn_function = NULL, verbose = TRUE) {
 
   # add arguments check(s).
   if(learn == "user" & is.null(learn_function)) stop("learn_function must be supplied if learn = 'user'.")
@@ -27,6 +27,7 @@ flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_di
     p1 <- arr_dims[2]
     p2 <- arr_dims[3]
     p <- p1 * p2
+    if(latent_dim_to == p1) latent_dim_to <- p # temporary fix for now.
     mat <- matrix(arr, nrow = n, ncol = p)
   } else {
     if(!("matrix" %in% class(mat))) stop("mat must be an n times p data matrix")
@@ -65,6 +66,7 @@ flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_di
   }
 
   if(learn == "pca") {
+    if(!all(breaks <= ncol(LearnOut[["phi_t"]]))) print("Number of non-zero eigenvectors is less than latent_dim_to")
     breaks <- breaks[which(breaks <= ncol(LearnOut[["phi_t"]]))]
   }
 
@@ -82,19 +84,20 @@ flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_di
       proj_t <- Decode(Encode(Y = mat, k = breaks[j]))
     } else { # if learning depends on latent dimension
       learnout_j <- learn_function(Y = mat, k = breaks[j])
-      Encode_j <- learnout_j[["Encode"]]
-      Decode_j <- learnout_j[["Decode"]]
-      proj_t <- Decode_j(Encode_j(mat))
-      # clear memory
-      rm(learnout_j)
-      rm(Encode_j)
-      rm(Decode_j)
+      proj_t <- learnout_j[["Decode"]](learnout_j[["Encode"]](mat))
     }
     corM_t[j] <- loss_function(observed = c(mat), predicted = c(proj_t))
+    if(learn == "ae") {
+      keras::k_clear_session()
+      rm(learnout_j)
+      gc(verbose = FALSE)
+    }
+    rm(proj_t)
+    gc(verbose = FALSE)
   }
 
-  # clear memory
-  gc(verbose = FALSE)
+
+
 
 
   # Do Cross-Validation: ----------------------------------------------------
@@ -137,13 +140,13 @@ flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_di
         proj_v[kind, , j] <- Decodev(Encodev(Y = mati, k = breaks[j]))
       } else {
         learnout_v_j <- learn_function(Y = mat[-kind,, drop = FALSE], k = breaks[j])
-        Encode <- learnout_v_j[["Encode"]]
-        Decode <- learnout_v_j[["Decode"]]
-        proj_v[kind, , j] <- Decode(Encode(mati))
-        rm(learnout_v_j)
-        rm(Encode)
-        rm(Decode)
+        proj_v[kind, , j] <- learnout_v_j[["Decode"]](learnout_v_j[["Encode"]](mati))
       }
+      if(learn == "ae") {
+        keras::k_clear_session()
+        rm(learnout_v_j)
+        gc(verbose = FALSE)
+        }
     }
   }
 
@@ -177,5 +180,5 @@ flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_di
   }
 
   # Return output in list: --------------------------------------------------
-  list(corM_t = corM_t, corM_v = corM_v, rho_v = rho_v, Qrho_v = Qrho_v, breaks = breaks, n = n, p = p, r = r, q = q, n = n, p = p)
+  list(corM_t = corM_t, corM_v = corM_v, rho_v = rho_v, Qrho_v = Qrho_v, breaks = breaks, n = n, p = p, r = r, q = q, n = n, p = p, learn = learn)
 }

@@ -69,9 +69,9 @@ ph_pca <- GLaRe(
   learn = "pca",
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
-  cvqlines = 0.5,
-  cutoffcriterion = 0.95,
-  cutoffvalue = 0.05,
+  cvqlines = 0.9,
+  cutoff_criterion = 0.95,
+  tolerance_level = 0.05,
   latent_dim_by = 10,
   latent_dim_to = ncol(PH),
   verbose = FALSE
@@ -83,9 +83,9 @@ ph_ae <- GLaRe(
   learn = "ae",
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
-  cvqlines = 0.5,
-  cutoffcriterion = 0.95,
-  cutoffvalue = 0.05,
+  cvqlines = 0.9,
+  cutoff_criterion = 0.95,
+  tolerance_level = 0.05,
   latent_dim_by = 10,
   latent_dim_to = ncol(PH),
   ae_args = list(link_fun = "linear", epoch = 50),
@@ -98,9 +98,9 @@ ph_dwt <- GLaRe(
   learn = "dwt",
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
-  cvqlines = 0.5,
-  cutoffcriterion = 0.95,
-  cutoffvalue = 0.05,
+  cvqlines = 0.9,
+  cutoff_criterion = 0.95,
+  tolerance_level = 0.05,
   latent_dim_by = 10,
   latent_dim_to = ncol(PH),
   verbose = FALSE
@@ -108,7 +108,7 @@ ph_dwt <- GLaRe(
 ```
 
 Look at individual losses distributions:
-```{r, fig.asp = 0.33}
+```{r, fig.asp = 0.33, fig.width = 12}
 par(mfrow = c(1, 3))
 distribution_plot(GLaRe_output = ph_pca)
 distribution_plot(GLaRe_output = ph_ae)
@@ -116,7 +116,7 @@ distribution_plot(GLaRe_output = ph_dwt)
 ```
 
 Look at the training validation ratios:
-```{r, fig.asp = 0.33}
+```{r, fig.asp = 0.33, fig.width = 12}
 par(mfrow = c(1, 3))
 plot_train_validation_ratio(GLaRe_output = ph_pca)
 plot_train_validation_ratio(GLaRe_output = ph_ae)
@@ -140,9 +140,9 @@ DTI_pca <- GLaRe(
   learn = "pca",
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
-  cvqlines = 0.5,
-  cutoffcriterion = 0.95,
-  cutoffvalue = 0.05,
+  cvqlines = 0.9,
+  cutoff_criterion = 0.95,
+  tolerance_level = 0.05,
   latent_dim_by = 8,
   latent_dim_to = nrow(DTI),
   verbose = FALSE
@@ -153,9 +153,9 @@ DTI_ae <- GLaRe(
   learn = "ae",
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
-  cvqlines = 0.5,
-  cutoffcriterion = 0.95,
-  cutoffvalue = 0.05,
+  cvqlines = 0.9,
+  cutoff_criterion = 0.95,
+  tolerance_level = 0.05,
   latent_dim_by = 8,
   latent_dim_to = nrow(DTI),
   ae_args = list(link_fun = "linear", epoch = 50),
@@ -167,9 +167,9 @@ DTI_dwt <- GLaRe(
   learn = "dwt",
   kf = 5,
   sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
-  cvqlines = 0.5,
-  cutoffcriterion = 0.95,
-  cutoffvalue = 0.05,
+  cvqlines = 0.9,
+  cutoff_criterion = 0.95,
+  tolerance_level = 0.05,
   latent_dim_by = 8,
   latent_dim_to = nrow(DTI),
   verbose = FALSE
@@ -178,7 +178,7 @@ DTI_dwt <- GLaRe(
 
 
 Look at individual losses distributions:
-```{r, fig.asp = 0.33}
+```{r, fig.asp = 0.33, fig.width = 12}
 par(mfrow = c(1, 3))
 distribution_plot(GLaRe_output = DTI_pca)
 distribution_plot(GLaRe_output = DTI_ae)
@@ -186,9 +186,137 @@ distribution_plot(GLaRe_output = DTI_dwt)
 ```
 
 Look at the training validation ratios:
-```{r, fig.asp = 0.33}
+```{r, fig.asp = 0.33, fig.width = 12}
 par(mfrow = c(1, 3))
 plot_train_validation_ratio(GLaRe_output = DTI_pca)
 plot_train_validation_ratio(GLaRe_output = DTI_ae)
 plot_train_validation_ratio(GLaRe_output = DTI_dwt)
+```
+
+
+## Example: The Glaucoma Data
+
+This data is stored in the package as `glaucoma_data`, along with a function to plot it, known as `plot_eye()`:
+
+```{r, fig.width = 5, fig.asp = 1}
+glaucoma <- as.matrix(glaucoma_data)
+plot_eye(y = glaucoma[1, ])
+```
+
+```{r, fig.asp = 0.33}
+par(mfrow = c(1, 3), cex = 0.5) # side-by-side plots
+glaucoma_pca <- GLaRe(
+  mat = glaucoma,
+  learn = "pca",
+  kf = 5,
+  sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
+  cvqlines = 0.9,
+  cutoff_criterion = 0.95,
+  tolerance_level = 0.05,
+  latent_dim_by = 20,
+  latent_dim_to = 500)
+
+glaucoma_reshaped <- array(glaucoma, dim = c(nrow(glaucoma), 120, 120))
+glaucoma_dwt.2d <- GLaRe(
+  mat = glaucoma_reshaped,
+  learn = "dwt.2d",
+  kf = 5,
+  sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
+  cvqlines = 0.9,
+  cutoff_criterion = 0.95,
+  tolerance_level = 0.05,
+  latent_dim_by = 20,
+  latent_dim_to = 500)
+
+glaucoma_ae <- GLaRe(
+  mat = glaucoma,
+  learn = "ae",
+  kf = 5,
+  sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
+  cvqlines = 0.9,
+  cutoff_criterion = 0.95,
+  tolerance_level = 0.05,
+  latent_dim_by = 20,
+  latent_dim_to = 500,
+  ae_args = list(link_fun = "linear", epoch = 50))
+```
+
+Look at individual losses distributions:
+```{r, fig.asp = 0.33, fig.width = 12}
+par(mfrow = c(1, 3))
+distribution_plot(GLaRe_output = glaucoma_pca)
+distribution_plot(GLaRe_output = glaucoma_ae)
+distribution_plot(GLaRe_output = glaucoma_dwt.2d)
+```
+
+Look at the training validation ratios:
+```{r, fig.asp = 0.33, fig.width = 12}
+par(mfrow = c(1, 3))
+plot_train_validation_ratio(GLaRe_output = glaucoma_pca)
+plot_train_validation_ratio(GLaRe_output = glaucoma_ae)
+plot_train_validation_ratio(GLaRe_output = glaucoma_dwt.2d)
+```
+
+
+## Example: MNIST
+
+```{r}
+mnist <- keras::dataset_mnist()
+## normalize so the range is (0,1)
+mnist_train <- mnist$train$x/255
+mnist_train_flattened <- matrix(mnist_train, nrow(mnist_train), 784)
+```
+
+
+```{r, fig.asp = 0.33}
+par(mfrow = c(1, 3), cex = 0.5) # side-by-side plots
+mnist_pca <- GLaRe(
+  mat = mnist_train_flattened,
+  learn = "pca",
+  kf = 5,
+  sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
+  cvqlines = 0.9,
+  cutoff_criterion = 0.95,
+  tolerance_level = 0.05,
+  latent_dim_by = 20,
+  latent_dim_to = 500)
+
+mnist_dwt.2d <- GLaRe(
+  mat = mnist_train,
+  learn = "dwt.2d",
+  kf = 5,
+  sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
+  cvqlines = 0.9,
+  cutoff_criterion = 0.95,
+  tolerance_level = 0.05,
+  latent_dim_by = 20,
+  latent_dim_to = 500)
+
+mnist_ae <- GLaRe(
+  mat = mnist_train_flattened,
+  learn = "ae",
+  kf = 5,
+  sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
+  cvqlines = 0.9,
+  cutoff_criterion = 0.95,
+  tolerance_level = 0.05,
+  latent_dim_by = 20,
+  latent_dim_to = 500,
+  ae_args = list(link_fun = "linear", epoch = 50))
+```
+
+Look at individual losses distributions:
+```{r, fig.asp = 0.33, fig.width = 12}
+par(mfrow = c(1, 3))
+distribution_plot(GLaRe_output = mnist_pca)
+distribution_plot(GLaRe_output = mnist_ae)
+distribution_plot(GLaRe_output = mnist_dwt)
+```
+
+Look at the training validation ratios:
+```{r, fig.asp = 0.33, fig.width = 12}
+par(mfrow = c(1, 3))
+plot_train_validation_ratio(GLaRe_output = mnist_pca)
+plot_train_validation_ratio(GLaRe_output = mnist_ae)
+plot_train_validation_ratio(GLaRe_output = mnist_dwt)
 ```

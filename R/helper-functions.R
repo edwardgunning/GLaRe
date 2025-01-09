@@ -123,7 +123,7 @@ plot_mnist <- function(y, main = NULL) {
 #' @examples
 plot_eye_reconstruction <- function(GLaRe_output, y) {
   Encode <- function(Y) {
-    GLaRe_output$Encode(Y, k = GLaRe_output$qc)
+    GLaRe_output$Encode(Y)
   }
   Decode <- GLaRe_output$Decode
   Y <- matrix(y, nrow = 1, ncol = GLaRe_output$p)
@@ -145,18 +145,17 @@ plot_eye_reconstruction <- function(GLaRe_output, y) {
 #'
 #' @examples
 plot_mnist_reconstruction <- function(GLaRe_output, y) {
-  Encode <- function(Y) {
-    GLaRe_output$Encode(Y, k = GLaRe_output$qc)
-  }
+  Encode <- GLaRe_output$Encode
   Decode <- GLaRe_output$Decode
   Y <- matrix(y, nrow = 1, ncol = GLaRe_output$p)
   recon <- Decode(Ystar = Encode(Y = Y))
   recon_reshape <- matrix(recon, 28, 28)
   y_mat <- matrix(y, 28, 28)
-
   par(mfrow = c(1, 2))
-  plot_mnist(y = y_mat, main = "Data")
-  plot_mnist(recon_reshape, main = "Reconstruction")
+  plot_mnist(y = y_mat, main = "")
+  title(main = "Data")
+  plot_mnist(recon_reshape, main = "")
+  title(main = "Reconstruction")
 }
 
 #' Plot a reconstruction of 1-D (e.g., time series) data.
@@ -168,9 +167,7 @@ plot_mnist_reconstruction <- function(GLaRe_output, y) {
 #'
 #' @examples
 plot_1D_reconstruction <- function(GLaRe_output, Y) {
-  Encode <- function(Y) {
-    GLaRe_output$Encode(Y, k = GLaRe_output$qc)
-  }
+  Encode <- GLaRe_output$Encode
   Decode <- GLaRe_output$Decode
   recon <- Decode(Ystar = Encode(Y = Y))
   matplot(y = t(Y), type = "l", lty = 1)
@@ -178,9 +175,38 @@ plot_1D_reconstruction <- function(GLaRe_output, Y) {
   legend("topright", legend = c("Data", "Reconstruction"), lty = c(1, 3), col = 1)
 }
 
-
-
 plot_gel <- function(y) {
-  image(x = seq(0, 1, length.out = 861), y = seq(0, 1, length.out = 646),  z = y, col = topo.colors(10), xlab = NA, ylab = NA)
+  image(x = seq(0, 1, length.out = 861),
+        y = seq(0, 1, length.out = 646),
+        z = y,
+        col = topo.colors(10),
+        xlab = NA, ylab = NA)
 }
 
+#' Plot a reconstruction of gels data.
+#'
+#' @param GLaRe_output the object returned from a call to the `GLaRE()` function.
+#' @param Y An n times p matrix containing the n observations for which you want their reconstruction displayed.
+#' @return
+#' @export
+#'
+#' @examples
+plot_gel_reconstruction <- function(GLaRe_output, y) {
+
+  Y <- matrix(y, nrow = 1, ncol = GLaRe_output$p)
+
+
+  Encode <- GLaRe_output$Encode
+  Decode <- GLaRe_output$Decode
+
+  recon <- Decode(Ystar = Encode(Y = Y))
+
+  Y <- matrix(Y, nrow = 861, ncol = 646)
+  Yhat <- matrix(recon, nrow = 861, ncol = 646)
+
+  par(mfrow = c(1, 2))
+  plot_gel(y = Y)
+  title("Data")
+  plot_gel(y = Yhat)
+  title("Reconstruction")
+}

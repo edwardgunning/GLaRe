@@ -5,9 +5,9 @@
 \title{Assess losslessness of a latent feature representation method using k-fold cross-validation.}
 \usage{
 GLaRe(
-  mat = iris[, 1:4],
+  mat = as.matrix(glaucoma_data),
   latent_dim_from = 1,
-  latent_dim_to = min(ncol(mat) - 1, nrow(mat) - 1),
+  latent_dim_to = min(ncol(mat), nrow(mat) - 1),
   latent_dim_by = 1,
   learn = "pca",
   method_name = toupper(learn),
@@ -37,7 +37,7 @@ GLaRe(
 
 \item{cvqlines}{The user-specified quantile of the cross-validated loss distribution to display on the plot.}
 
-\item{ae_args}{Only to be specified if `learn = "ae"`, a list containing the following named elements to define the architecture and training: `layer_1_dim`, `layer_2_dim`, `link_fun`, `epochs`, `loss` and `batch_size`.}
+\item{ae_args}{Only to be specified if `learn = "ae"`, a list containing the following named elements to define the architecture and training: `layer_1_dim`, `link_fun`, `epochs`, `loss` and `batch_size`.}
 
 \item{tolerance_level}{A (typically small) value that we want a quantile (defined by `cutoff_criterion`) of our individual cross-validated losses to be less than (called $\epsilon$ in paper). For example, `tolerance_level = 0.05` and `cutoff_criterion = 0.95` means that we would want 95\% of individual cross-validated losses to be below 0.05. Defaults to 0.05.}
 

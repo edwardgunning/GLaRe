@@ -59,56 +59,43 @@ ph_pca <- GLaRe(
   mat = PH,
   learn = "pca",
   kf = 5,
-  sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
-  cvqlines = 0.5,
-  cutoffcriterion = 0.95,
-  cutoffvalue = 0.05,
+  cvqlines = 0.9,
+  cutoff_criterion = 0.95,
+  tolerance_level = 0.05,
   latent_dim_by = 10,
   latent_dim_to = ncol(PH),
   verbose = FALSE
 )
-#> [1] "*** Learning Method: pca ***"
-```
-
-``` r
 
 ## autoencoder
-ph_ae <- GLaRe(
-  mat = PH,
-  learn = "ae",
-  kf = 5,
-  sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
-  cvqlines = 0.5,
-  cutoffcriterion = 0.95,
-  cutoffvalue = 0.05,
-  latent_dim_by = 10,
-  latent_dim_to = ncol(PH),
-  ae_args = list(link_fun = "linear", epoch = 50),
-  verbose = FALSE
-)
-#> [1] "*** Learning Method: ae ***"
-#> Warning in GLaRe(mat = PH, learn = "ae", kf = 5, sqcorrel = c("trainmean", : No
-#> qualifying criterion found, try adjusting parameters.
-```
-
-``` r
+# ph_ae <- GLaRe(
+#   mat = PH,
+#   learn = "ae",
+#   kf = 5,
+#   cvqlines = 0.9,
+#   cutoff_criterion = 0.95,
+#   tolerance_level = 0.05,
+#   latent_dim_by = 10,
+#   latent_dim_to = ncol(PH),
+#   ae_args = list(link_fun = "linear", epoch = 50),
+#   verbose = FALSE
+# )
 
 ## dwt
 ph_dwt <- GLaRe(
   mat = PH,
   learn = "dwt",
   kf = 5,
-  sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
-  cvqlines = 0.5,
-  cutoffcriterion = 0.95,
-  cutoffvalue = 0.05,
+  cvqlines = 0.9,
+  cutoff_criterion = 0.95,
+  tolerance_level = 0.05,
   latent_dim_by = 10,
   latent_dim_to = ncol(PH),
   verbose = FALSE
 )
-#> [1] "*** Learning Method: dwt ***"
-#> Warning in GLaRe(mat = PH, learn = "dwt", kf = 5, sqcorrel = c("trainmean", :
-#> No qualifying criterion found, try adjusting parameters.
+#> Warning in GLaRe(mat = PH, learn = "dwt", kf = 5, cvqlines = 0.9,
+#> cutoff_criterion = 0.95, : No qualifying criterion found, try adjusting
+#> parameters.
 ```
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
@@ -118,7 +105,7 @@ Look at individual losses distributions:
 ``` r
 par(mfrow = c(1, 3))
 distribution_plot(GLaRe_output = ph_pca)
-distribution_plot(GLaRe_output = ph_ae)
+# distribution_plot(GLaRe_output = ph_ae)
 distribution_plot(GLaRe_output = ph_dwt)
 ```
 
@@ -129,7 +116,7 @@ Look at the training validation ratios:
 ``` r
 par(mfrow = c(1, 3))
 plot_train_validation_ratio(GLaRe_output = ph_pca)
-plot_train_validation_ratio(GLaRe_output = ph_ae)
+# plot_train_validation_ratio(GLaRe_output = ph_ae)
 plot_train_validation_ratio(GLaRe_output = ph_dwt)
 ```
 
@@ -153,52 +140,38 @@ DTI_pca <- GLaRe(
   mat = DTI,
   learn = "pca",
   kf = 5,
-  sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
-  cvqlines = 0.5,
-  cutoffcriterion = 0.95,
-  cutoffvalue = 0.05,
+  cvqlines = 0.9,
+  cutoff_criterion = 0.95,
+  tolerance_level = 0.05,
   latent_dim_by = 8,
   latent_dim_to = nrow(DTI),
   verbose = FALSE
 )
-#> [1] "*** Learning Method: pca ***"
-```
 
-``` r
-
-DTI_ae <- GLaRe(
-  mat = DTI,
-  learn = "ae",
-  kf = 5,
-  sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
-  cvqlines = 0.5,
-  cutoffcriterion = 0.95,
-  cutoffvalue = 0.05,
-  latent_dim_by = 8,
-  latent_dim_to = nrow(DTI),
-  ae_args = list(link_fun = "linear", epoch = 50),
-  verbose = FALSE
-)
-#> [1] "*** Learning Method: ae ***"
-#> Warning in GLaRe(mat = DTI, learn = "ae", kf = 5, sqcorrel = c("trainmean", :
-#> No qualifying criterion found, try adjusting parameters.
-```
-
-``` r
+# DTI_ae <- GLaRe(
+#   mat = DTI,
+#   learn = "ae",
+#   kf = 5,
+#   cvqlines = 0.9,
+#   cutoff_criterion = 0.95,
+#   tolerance_level = 0.05,
+#   latent_dim_by = 8,
+#   latent_dim_to = nrow(DTI),
+#   ae_args = list(link_fun = "linear", epoch = 50),
+#   verbose = FALSE
+# )
 
 DTI_dwt <- GLaRe(
   mat = DTI,
   learn = "dwt",
   kf = 5,
-  sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
-  cvqlines = 0.5,
-  cutoffcriterion = 0.95,
-  cutoffvalue = 0.05,
+  cvqlines = 0.9,
+  cutoff_criterion = 0.95,
+  tolerance_level = 0.05,
   latent_dim_by = 8,
   latent_dim_to = nrow(DTI),
   verbose = FALSE
 )
-#> [1] "*** Learning Method: dwt ***"
 ```
 
 <img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
@@ -208,7 +181,7 @@ Look at individual losses distributions:
 ``` r
 par(mfrow = c(1, 3))
 distribution_plot(GLaRe_output = DTI_pca)
-distribution_plot(GLaRe_output = DTI_ae)
+# distribution_plot(GLaRe_output = DTI_ae)
 distribution_plot(GLaRe_output = DTI_dwt)
 ```
 
@@ -219,8 +192,1008 @@ Look at the training validation ratios:
 ``` r
 par(mfrow = c(1, 3))
 plot_train_validation_ratio(GLaRe_output = DTI_pca)
-plot_train_validation_ratio(GLaRe_output = DTI_ae)
+# plot_train_validation_ratio(GLaRe_output = DTI_ae)
 plot_train_validation_ratio(GLaRe_output = DTI_dwt)
 ```
 
 <img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+
+## Example: The Glaucoma Data
+
+This data is stored in the package as `glaucoma_data`, along with a
+function to plot it, known as `plot_eye()`:
+
+``` r
+glaucoma <- as.matrix(glaucoma_data)
+plot_eye(y = glaucoma[1, ])
+```
+
+<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
+
+``` r
+par(mfrow = c(1, 3), cex = 0.5) # side-by-side plots
+glaucoma_pca <- GLaRe(
+  mat = glaucoma,
+  learn = "pca",
+  kf = 5,
+  cvqlines = 0.9,
+  cutoff_criterion = 0.95,
+  tolerance_level = 0.05,
+  latent_dim_by = 20,
+  latent_dim_to = 500)
+#> [1] "*** Learning Method: pca ***"
+#> [1] "Number of non-zero eigenvectors is less than latent_dim_to"
+#> [1] "====== Training ======"
+#> [1] "= Latent Dim. = 1"
+#> [1] "= Latent Dim. = 21"
+#> [1] "= Latent Dim. = 41"
+#> [1] "= Latent Dim. = 61"
+#> [1] "= Latent Dim. = 81"
+#> [1] "= Latent Dim. = 101"
+#> [1] "= Latent Dim. = 121"
+#> [1] "= Latent Dim. = 141"
+#> [1] "= Latent Dim. = 161"
+#> [1] "= Latent Dim. = 181"
+#> [1] "= Latent Dim. = 201"
+#> [1] "= Latent Dim. = 221"
+#> [1] "= Latent Dim. = 241"
+#> [1] "= Latent Dim. = 261"
+#> [1] "====== Performing 5-fold CV ======="
+#> [1] "==== Fold  1 ===="
+#> [1] "= Latent Dim. = 1"
+#> [1] "= Latent Dim. = 21"
+#> [1] "= Latent Dim. = 41"
+#> [1] "= Latent Dim. = 61"
+#> [1] "= Latent Dim. = 81"
+#> [1] "= Latent Dim. = 101"
+#> [1] "= Latent Dim. = 121"
+#> [1] "= Latent Dim. = 141"
+#> [1] "= Latent Dim. = 161"
+#> [1] "= Latent Dim. = 181"
+#> [1] "= Latent Dim. = 201"
+#> [1] "= Latent Dim. = 221"
+#> [1] "= Latent Dim. = 241"
+#> [1] "==== Fold  2 ===="
+#> [1] "= Latent Dim. = 1"
+#> [1] "= Latent Dim. = 21"
+#> [1] "= Latent Dim. = 41"
+#> [1] "= Latent Dim. = 61"
+#> [1] "= Latent Dim. = 81"
+#> [1] "= Latent Dim. = 101"
+#> [1] "= Latent Dim. = 121"
+#> [1] "= Latent Dim. = 141"
+#> [1] "= Latent Dim. = 161"
+#> [1] "= Latent Dim. = 181"
+#> [1] "= Latent Dim. = 201"
+#> [1] "= Latent Dim. = 221"
+#> [1] "= Latent Dim. = 241"
+#> [1] "==== Fold  3 ===="
+#> [1] "= Latent Dim. = 1"
+#> [1] "= Latent Dim. = 21"
+#> [1] "= Latent Dim. = 41"
+#> [1] "= Latent Dim. = 61"
+#> [1] "= Latent Dim. = 81"
+#> [1] "= Latent Dim. = 101"
+#> [1] "= Latent Dim. = 121"
+#> [1] "= Latent Dim. = 141"
+#> [1] "= Latent Dim. = 161"
+#> [1] "= Latent Dim. = 181"
+#> [1] "= Latent Dim. = 201"
+#> [1] "= Latent Dim. = 221"
+#> [1] "= Latent Dim. = 241"
+#> [1] "==== Fold  4 ===="
+#> [1] "= Latent Dim. = 1"
+#> [1] "= Latent Dim. = 21"
+#> [1] "= Latent Dim. = 41"
+#> [1] "= Latent Dim. = 61"
+#> [1] "= Latent Dim. = 81"
+#> [1] "= Latent Dim. = 101"
+#> [1] "= Latent Dim. = 121"
+#> [1] "= Latent Dim. = 141"
+#> [1] "= Latent Dim. = 161"
+#> [1] "= Latent Dim. = 181"
+#> [1] "= Latent Dim. = 201"
+#> [1] "= Latent Dim. = 221"
+#> [1] "= Latent Dim. = 241"
+#> [1] "==== Fold  5 ===="
+#> [1] "= Latent Dim. = 1"
+#> [1] "= Latent Dim. = 21"
+#> [1] "= Latent Dim. = 41"
+#> [1] "= Latent Dim. = 61"
+#> [1] "= Latent Dim. = 81"
+#> [1] "= Latent Dim. = 101"
+#> [1] "= Latent Dim. = 121"
+#> [1] "= Latent Dim. = 141"
+#> [1] "= Latent Dim. = 161"
+#> [1] "= Latent Dim. = 181"
+#> [1] "= Latent Dim. = 201"
+#> [1] "= Latent Dim. = 221"
+#> [1] "= Latent Dim. = 241"
+#> [1] "====== Finished 5-fold CV, Summarising Results ======="
+#> [1] "Final training of Model at qualifying criterion:"
+```
+
+``` r
+
+glaucoma_reshaped <- array(glaucoma, dim = c(nrow(glaucoma), 120, 120))
+glaucoma_dwt.2d <- GLaRe(
+  mat = glaucoma_reshaped,
+  learn = "dwt.2d",
+  kf = 5,
+  cvqlines = 0.9,
+  cutoff_criterion = 0.95,
+  tolerance_level = 0.05,
+  latent_dim_by = 20,
+  latent_dim_to = 500)
+#> [1] "*** Learning Method: dwt.2d ***"
+#> [1] "====== Training ======"
+#> [1] "= Latent Dim. = 1"
+#> [1] "= Latent Dim. = 21"
+#> [1] "= Latent Dim. = 41"
+#> [1] "= Latent Dim. = 61"
+#> [1] "= Latent Dim. = 81"
+#> [1] "= Latent Dim. = 101"
+#> [1] "= Latent Dim. = 121"
+#> [1] "= Latent Dim. = 141"
+#> [1] "= Latent Dim. = 161"
+#> [1] "= Latent Dim. = 181"
+#> [1] "= Latent Dim. = 201"
+#> [1] "= Latent Dim. = 221"
+#> [1] "= Latent Dim. = 241"
+#> [1] "= Latent Dim. = 261"
+#> [1] "= Latent Dim. = 281"
+#> [1] "= Latent Dim. = 301"
+#> [1] "= Latent Dim. = 321"
+#> [1] "= Latent Dim. = 341"
+#> [1] "= Latent Dim. = 361"
+#> [1] "= Latent Dim. = 381"
+#> [1] "= Latent Dim. = 401"
+#> [1] "= Latent Dim. = 421"
+#> [1] "= Latent Dim. = 441"
+#> [1] "= Latent Dim. = 461"
+#> [1] "= Latent Dim. = 481"
+#> [1] "====== Performing 5-fold CV ======="
+#> [1] "==== Fold  1 ===="
+#> [1] "= Latent Dim. = 1"
+#> [1] "= Latent Dim. = 21"
+#> [1] "= Latent Dim. = 41"
+#> [1] "= Latent Dim. = 61"
+#> [1] "= Latent Dim. = 81"
+#> [1] "= Latent Dim. = 101"
+#> [1] "= Latent Dim. = 121"
+#> [1] "= Latent Dim. = 141"
+#> [1] "= Latent Dim. = 161"
+#> [1] "= Latent Dim. = 181"
+#> [1] "= Latent Dim. = 201"
+#> [1] "= Latent Dim. = 221"
+#> [1] "= Latent Dim. = 241"
+#> [1] "= Latent Dim. = 261"
+#> [1] "= Latent Dim. = 281"
+#> [1] "= Latent Dim. = 301"
+#> [1] "= Latent Dim. = 321"
+#> [1] "= Latent Dim. = 341"
+#> [1] "= Latent Dim. = 361"
+#> [1] "= Latent Dim. = 381"
+#> [1] "= Latent Dim. = 401"
+#> [1] "= Latent Dim. = 421"
+#> [1] "= Latent Dim. = 441"
+#> [1] "= Latent Dim. = 461"
+#> [1] "= Latent Dim. = 481"
+#> [1] "==== Fold  2 ===="
+#> [1] "= Latent Dim. = 1"
+#> [1] "= Latent Dim. = 21"
+#> [1] "= Latent Dim. = 41"
+#> [1] "= Latent Dim. = 61"
+#> [1] "= Latent Dim. = 81"
+#> [1] "= Latent Dim. = 101"
+#> [1] "= Latent Dim. = 121"
+#> [1] "= Latent Dim. = 141"
+#> [1] "= Latent Dim. = 161"
+#> [1] "= Latent Dim. = 181"
+#> [1] "= Latent Dim. = 201"
+#> [1] "= Latent Dim. = 221"
+#> [1] "= Latent Dim. = 241"
+#> [1] "= Latent Dim. = 261"
+#> [1] "= Latent Dim. = 281"
+#> [1] "= Latent Dim. = 301"
+#> [1] "= Latent Dim. = 321"
+#> [1] "= Latent Dim. = 341"
+#> [1] "= Latent Dim. = 361"
+#> [1] "= Latent Dim. = 381"
+#> [1] "= Latent Dim. = 401"
+#> [1] "= Latent Dim. = 421"
+#> [1] "= Latent Dim. = 441"
+#> [1] "= Latent Dim. = 461"
+#> [1] "= Latent Dim. = 481"
+#> [1] "==== Fold  3 ===="
+#> [1] "= Latent Dim. = 1"
+#> [1] "= Latent Dim. = 21"
+#> [1] "= Latent Dim. = 41"
+#> [1] "= Latent Dim. = 61"
+#> [1] "= Latent Dim. = 81"
+#> [1] "= Latent Dim. = 101"
+#> [1] "= Latent Dim. = 121"
+#> [1] "= Latent Dim. = 141"
+#> [1] "= Latent Dim. = 161"
+#> [1] "= Latent Dim. = 181"
+#> [1] "= Latent Dim. = 201"
+#> [1] "= Latent Dim. = 221"
+#> [1] "= Latent Dim. = 241"
+#> [1] "= Latent Dim. = 261"
+#> [1] "= Latent Dim. = 281"
+#> [1] "= Latent Dim. = 301"
+#> [1] "= Latent Dim. = 321"
+#> [1] "= Latent Dim. = 341"
+#> [1] "= Latent Dim. = 361"
+#> [1] "= Latent Dim. = 381"
+#> [1] "= Latent Dim. = 401"
+#> [1] "= Latent Dim. = 421"
+#> [1] "= Latent Dim. = 441"
+#> [1] "= Latent Dim. = 461"
+#> [1] "= Latent Dim. = 481"
+#> [1] "==== Fold  4 ===="
+#> [1] "= Latent Dim. = 1"
+#> [1] "= Latent Dim. = 21"
+#> [1] "= Latent Dim. = 41"
+#> [1] "= Latent Dim. = 61"
+#> [1] "= Latent Dim. = 81"
+#> [1] "= Latent Dim. = 101"
+#> [1] "= Latent Dim. = 121"
+#> [1] "= Latent Dim. = 141"
+#> [1] "= Latent Dim. = 161"
+#> [1] "= Latent Dim. = 181"
+#> [1] "= Latent Dim. = 201"
+#> [1] "= Latent Dim. = 221"
+#> [1] "= Latent Dim. = 241"
+#> [1] "= Latent Dim. = 261"
+#> [1] "= Latent Dim. = 281"
+#> [1] "= Latent Dim. = 301"
+#> [1] "= Latent Dim. = 321"
+#> [1] "= Latent Dim. = 341"
+#> [1] "= Latent Dim. = 361"
+#> [1] "= Latent Dim. = 381"
+#> [1] "= Latent Dim. = 401"
+#> [1] "= Latent Dim. = 421"
+#> [1] "= Latent Dim. = 441"
+#> [1] "= Latent Dim. = 461"
+#> [1] "= Latent Dim. = 481"
+#> [1] "==== Fold  5 ===="
+#> [1] "= Latent Dim. = 1"
+#> [1] "= Latent Dim. = 21"
+#> [1] "= Latent Dim. = 41"
+#> [1] "= Latent Dim. = 61"
+#> [1] "= Latent Dim. = 81"
+#> [1] "= Latent Dim. = 101"
+#> [1] "= Latent Dim. = 121"
+#> [1] "= Latent Dim. = 141"
+#> [1] "= Latent Dim. = 161"
+#> [1] "= Latent Dim. = 181"
+#> [1] "= Latent Dim. = 201"
+#> [1] "= Latent Dim. = 221"
+#> [1] "= Latent Dim. = 241"
+#> [1] "= Latent Dim. = 261"
+#> [1] "= Latent Dim. = 281"
+#> [1] "= Latent Dim. = 301"
+#> [1] "= Latent Dim. = 321"
+#> [1] "= Latent Dim. = 341"
+#> [1] "= Latent Dim. = 361"
+#> [1] "= Latent Dim. = 381"
+#> [1] "= Latent Dim. = 401"
+#> [1] "= Latent Dim. = 421"
+#> [1] "= Latent Dim. = 441"
+#> [1] "= Latent Dim. = 461"
+#> [1] "= Latent Dim. = 481"
+#> [1] "====== Finished 5-fold CV, Summarising Results ======="
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
+#> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
+#> [1] "Final training of Model at qualifying criterion:"
+```
+
+``` r
+
+# glaucoma_ae <- GLaRe(
+#   mat = glaucoma,
+#   learn = "ae",
+#   kf = 5,
+#   cvqlines = 0.9,
+#   cutoff_criterion = 0.95,
+#   tolerance_level = 0.05,
+#   latent_dim_by = 20,
+#   latent_dim_to = 500,
+#   ae_args = list(link_fun = "linear", epoch = 50))
+```
+
+<img src="man/figures/README-unnamed-chunk-11-1.png" width="100%" />
+
+Look at individual losses distributions:
+
+``` r
+par(mfrow = c(1, 3))
+distribution_plot(GLaRe_output = glaucoma_pca)
+# distribution_plot(GLaRe_output = glaucoma_ae)
+distribution_plot(GLaRe_output = glaucoma_dwt.2d)
+```
+
+<img src="man/figures/README-unnamed-chunk-12-1.png" width="100%" />
+
+Look at the training validation ratios:
+
+``` r
+par(mfrow = c(1, 3))
+plot_train_validation_ratio(GLaRe_output = glaucoma_pca)
+# plot_train_validation_ratio(GLaRe_output = glaucoma_ae)
+plot_train_validation_ratio(GLaRe_output = glaucoma_dwt.2d)
+```
+
+<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />
+
+## Example: MNIST
+
+``` r
+mnist <- keras::dataset_mnist()
+## normalize so the range is (0,1)
+mnist_train <- mnist$train$x/255
+mnist_train_flattened <- matrix(mnist_train, nrow(mnist_train), 784)
+```
+
+``` r
+par(mfrow = c(1, 3), cex = 0.5) # side-by-side plots
+mnist_pca <- GLaRe(
+  mat = mnist_train_flattened,
+  learn = "pca",
+  kf = 5,
+  cvqlines = 0.9,
+  cutoff_criterion = 0.95,
+  tolerance_level = 0.05,
+  latent_dim_by = 20,
+  latent_dim_to = 500)
+
+mnist_dwt.2d <- GLaRe(
+  mat = mnist_train,
+  learn = "dwt.2d",
+  kf = 5,
+  cvqlines = 0.9,
+  cutoff_criterion = 0.95,
+  tolerance_level = 0.05,
+  latent_dim_by = 20,
+  latent_dim_to = 500)
+
+# mnist_ae <- GLaRe(
+#   mat = mnist_train_flattened,
+#   learn = "ae",
+#   kf = 5,
+#   cvqlines = 0.9,
+#   cutoff_criterion = 0.95,
+#   tolerance_level = 0.05,
+#   latent_dim_by = 20,
+#   latent_dim_to = 500,
+#   ae_args = list(link_fun = "linear", epoch = 50))
+```
+
+Look at individual losses distributions:
+
+``` r
+par(mfrow = c(1, 3))
+distribution_plot(GLaRe_output = mnist_pca)
+# distribution_plot(GLaRe_output = mnist_ae)
+distribution_plot(GLaRe_output = mnist_dwt)
+```
+
+Look at the training validation ratios:
+
+``` r
+par(mfrow = c(1, 3))
+plot_train_validation_ratio(GLaRe_output = mnist_pca)
+# plot_train_validation_ratio(GLaRe_output = mnist_ae)
+plot_train_validation_ratio(GLaRe_output = mnist_dwt)
+```

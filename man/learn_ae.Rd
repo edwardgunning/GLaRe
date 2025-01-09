@@ -11,7 +11,7 @@ learn_ae(Y, k, ae_args)
 
 \item{k}{The latent feature dimension. Also known as the "bottleneck dimension" in machine learning terminology.}
 
-\item{ae_args}{A list containing the following named elements to define the architecture and training of the AE: `layer_1_dim`, `layer_2_dim`, `link_fun`, `epochs`, `loss` and `batch_size`.}
+\item{ae_args}{A list containing the following named elements to define the architecture and training of the AE: `layer_1_dim`, `link_fun`, `epochs`, `loss` and `batch_size`.}
 }
 \description{
 Learning function for autoencoder (AE)

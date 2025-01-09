@@ -6,6 +6,11 @@
 \usage{
 plot_mnist_reconstruction(GLaRe_output, y)
 }
+\arguments{
+\item{GLaRe_output}{the object returned from a call to the `GLaRE()` function.}
+
+\item{y}{a 28 times 28 matrix representing an image from the MNIST dataset.}
+}
 \description{
 Plot a reconstruction of the mnist data.
 }
