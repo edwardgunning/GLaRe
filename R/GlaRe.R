@@ -14,7 +14,7 @@ transform_correlation_output <- function(out_basissel, cvqlines, cutoff_criterio
   cor_df
 }
 
-summary_correlation_plot <- function(out_basisel, cvqlines, cutoff_criterion, r, q, breaks, method_name, qc, tolerance_level) {
+summary_correlation_plot <- function(out_basisel, cvqlines, cutoff_criterion, r, q, breaks, method_name, qd, tolerance_level) {
   correlation_df <- transform_correlation_output(out_basisel, cvqlines, cutoff_criterion)
   plot(
     x = breaks,
@@ -41,10 +41,10 @@ summary_correlation_plot <- function(out_basisel, cvqlines, cutoff_criterion, r,
   }
   lines(x = breaks[seq_len(r)], correlation_df[seq_len(r), "cutoff_criterion_cv"], col = "grey", lwd = 2, lty = 2, type = "b", pch = 20)
 
-  if (!is.na(qc)) {
-    abline(v = qc, lty = 2, col = "grey")
+  if (!is.na(qd)) {
+    abline(v = qd, lty = 2, col = "grey")
     abline(h = tolerance_level, lty = 2, col = "grey")
-    axis(side = 1, at = c(qc), labels = paste0("qc = ", qc), col = "darkgrey", font = 4, lwd = 3, padj = 1.2)
+    axis(side = 1, at = c(qd), labels = paste0("qd = ", qd), col = "darkgrey", font = 4, lwd = 3, padj = 1.2)
     axis(side = 2, at = c(tolerance_level), labels = paste0("ε = ", tolerance_level), col = "darkgrey", font = 4, lwd = 3, padj = 1.2)
   }
 
@@ -118,10 +118,10 @@ GLaRe <- function(
   cutoff_criterion_quantiles <- apply(out[["rho_v"]][, seq_len(r), drop = FALSE], 2, function(x) quantile(x, cutoff_criterion, na.rm = TRUE))
   if (!any(cutoff_criterion_quantiles <= tolerance_level)) {
     warning("No qualifying criterion found, try adjusting parameters.")
-    qc <- NA
+    qd <- NA
   } else {
     index <- min(which(cutoff_criterion_quantiles <= tolerance_level))
-    qc <- breaks[index]
+    qd <- breaks[index]
   }
 
   # Loss-lessness (Scree) Plot:  ---------------------------------------------
@@ -132,7 +132,7 @@ GLaRe <- function(
                            q = q,
                            breaks = breaks,
                            method_name = method_name,
-                           qc = qc,
+                           qd = qd,
                            tolerance_level = tolerance_level)
 
 
@@ -161,7 +161,7 @@ GLaRe <- function(
 
   # Return Decode and Encode: -----------------------------------------------
   # Only if qualifying criterion is met:
-  if(!is.na(qc)) {
+  if(!is.na(qd)) {
     if(verbose) {
       print("Final training of Model at qualifying criterion:")
     }
@@ -193,21 +193,21 @@ GLaRe <- function(
     if (learn %in% c("pca", "dwt", "dwt.2d")) {
       learn_final <- learn_function(mat)
       out[["Encode"]] <- function(Y) {
-        learn_final[["Encode"]](Y = Y, k = qc)
+        learn_final[["Encode"]](Y = Y, k = qd)
       }
     } else {
-      learn_final <- learn_function(Y = mat, k = qc)
+      learn_final <- learn_function(Y = mat, k = qd)
       out[["Encode"]] <- learn_final[["Encode"]]
     }
 
     out[["Decode"]] <- learn_final[["Decode"]]
 
-  } else if(is.na(qc)){
+  } else if(is.na(qd)){
     out[["Encode"]] <- NA
     out[["Decode"]] <- NA
   }
 
-  out$qc <- qc
+  out$qd <- qd
   out$heatmap <- heat_map
   # final:
   out

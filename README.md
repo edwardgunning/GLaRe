@@ -7,7 +7,7 @@
 <!-- badges: end -->
 
 The goal of `GLaRE` is to facilitate the evaluation of losslessness of
-different latent feature representations based on generalisation error.
+different latent feature representations based on generalisation error…
 
 ## Installation
 
