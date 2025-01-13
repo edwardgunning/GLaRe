@@ -84,13 +84,31 @@ idwt.2d_array <- function(D, ppad, ppad_left, ppad_right, qpad, qpad_left, qpad_
 }
 
 
-#' Learning function for 2-D DWT.
-#' @param Y an n times p data matrix.
+#' Learning Function for 2-D Discrete Wavelet Transform (DWT)
 #'
-#' @return
-#' @export
+#' This function applies a 2-D discrete wavelet transform (DWT) to encode and decode
+#' image-like data (e.g., matrices or arrays) using energy-based thresholding of wavelet coefficients.
+#'
+#' @param Y A numeric matrix with `n` rows (observations) and `p1 * p2` columns (features),
+#'          where each row represents a flattened 2-D signal of dimensions `(p1, p2)`.
+#' @param p1 An integer specifying the number of rows in the original 2-D signal.
+#' @param p2 An integer specifying the number of columns in the original 2-D signal.
+#' @return A list containing:
+#'   \itemize{
+#'     \item `Encode`: A function to encode data into a thresholded wavelet space.
+#'                     Takes arguments `Y` (data matrix) and `k` (number of coefficients to retain).
+#'     \item `Decode`: A function to reconstruct data from the thresholded wavelet coefficients.
+#'   }
+#' @details
+#' The function works by first reshaping the flattened input data into its original 2-D form.
+#' Each signal is padded to a dyadic size (if necessary) to ensure compatibility with the wavelet transform.
+#' Energy-based thresholding is then applied to retain the `k` most significant coefficients for encoding.
+#' Reconstruction is performed using the inverse 2-D DWT.
 #'
 #' @examples
+#'
+#' @importFrom waveslim dwt.2d idwt.2d
+#' @export
 learn_dwt.2d <- function(Y, p1, p2) {
 
   stopifnot(ncol(Y) == p1 * p2)

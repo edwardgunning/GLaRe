@@ -2,13 +2,27 @@
 % Please edit documentation in R/learn_dwt.R
 \name{learn_dwt}
 \alias{learn_dwt}
-\title{Learning function for 1-D DWT.}
+\title{Learning Function for 1-D Discrete Wavelet Transform (DWT)}
 \usage{
 learn_dwt(Y)
 }
 \arguments{
-\item{Y}{an n times p data matrix.}
+\item{Y}{A numeric matrix with `n` rows (observations) and `p` columns (variables).
+The number of columns must be padded to a dyadic length internally.}
+}
+\value{
+A list containing:
+  \itemize{
+    \item `Encode`: A function to encode data into a thresholded wavelet space.
+                    Takes arguments `Y` (data matrix) and `k` (number of coefficients to retain).
+    \item `Decode`: A function to reconstruct data from the thresholded wavelet coefficients.
+  }
 }
 \description{
-Learning function for 1-D DWT.
+This function applies the 1-D discrete wavelet transform (DWT) to encode and decode
+data using energy-based thresholding of wavelet coefficients.
+}
+\details{
+The function uses wavelet coefficients' relative energy to rank their importance. The
+thresholding mechanism retains the `k` most important coefficients for encoding.
 }

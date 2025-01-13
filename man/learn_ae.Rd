@@ -2,17 +2,49 @@
 % Please edit documentation in R/learn_ae.R
 \name{learn_ae}
 \alias{learn_ae}
-\title{Learning function for autoencoder (AE)}
+\title{Train an Autoencoder for Dimensionality Reduction}
 \usage{
 learn_ae(Y, k, ae_args)
 }
 \arguments{
-\item{Y}{An n times p data matrix.}
+\item{Y}{A numeric matrix with `n` rows (observations) and `p` columns (variables).}
 
-\item{k}{The latent feature dimension. Also known as the "bottleneck dimension" in machine learning terminology.}
+\item{k}{An integer specifying the latent feature dimension (bottleneck dimension).}
 
-\item{ae_args}{A list containing the following named elements to define the architecture and training of the AE: `layer_1_dim`, `link_fun`, `epochs`, `loss` and `batch_size`.}
+\item{ae_args}{A list containing the following hyperparameters:
+\itemize{
+  \item `layer_1_dim`: Number of units in the hidden layer (default: 600).
+  \item `link_fun`: Activation function for the output layer, either `"linear"` or `"sigmoid"` (default: `"sigmoid"`).
+  \item `epochs`: Number of training epochs (default: 100).
+  \item `loss`: Loss function, either `"mean_squared_error"` or `"binary_crossentropy"` (default: `"mean_squared_error"`).
+  \item `batch_size`: Mini-batch size for training (default: 16).
+}}
+}
+\value{
+A list containing:
+  \itemize{
+    \item `Encode`: A function to encode data into the latent space.
+    \item `Decode`: A function to reconstruct data from the latent space.
+  }
 }
 \description{
-Learning function for autoencoder (AE)
+This function trains an autoencoder to encode data into a lower-dimensional latent space
+and reconstruct it back to the original space.
+}
+\examples{
+# Example: Simulated Data from a PCA Model
+library(GLarE)
+set.seed(1996)
+
+# Simulate data from a PCA model
+n <- 100 # Number of observations
+p <- 10 # Number of variables
+k <- 3 # True number of latent components
+loadings <- matrix(rnorm(p * k), nrow = p, ncol = k) # Loadings matrix
+scores <- matrix(rnorm(n * k), nrow = n, ncol = k) # Factor scores
+Y <- scores \%*\% t(loadings) + matrix(rnorm(n * p, mean = 0, sd = 0.1), nrow = n, ncol = p)
+# Train autoencoder
+ae_model <- learn_ae(Y, k = 5, ae_args = list(epochs = 50, layer_1_dim = 100, link_fun = "linear"))
+encoded_data <- ae_model$Encode(Y)
+reconstructed_data <- ae_model$Decode(encoded_data)
 }

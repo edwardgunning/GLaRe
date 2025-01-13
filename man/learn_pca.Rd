@@ -2,13 +2,33 @@
 % Please edit documentation in R/learn_pca.R
 \name{learn_pca}
 \alias{learn_pca}
-\title{Learning function for principal component analysis (PCA).}
+\title{Perform PCA with Encoding and Decoding Functions}
 \usage{
 learn_pca(Y)
 }
 \arguments{
-\item{Y}{an n times p data matrix.}
+\item{Y}{A numeric matrix with `n` rows (observations) and `p` columns (variables).}
+}
+\value{
+A list containing:
+\itemize{
+  \item `mu_t`: A vector of column means used for centering the data.
+  \item `phi_t`: A matrix of eigenvectors (principal components).
+  \item `Encode`: A function to encode data into the reduced PCA space.
+  \item `Decode`: A function to reconstruct data from the PCA space.
+}
 }
 \description{
-Learning function for principal component analysis (PCA).
+This function implements Principal Component Analysis (PCA), returning the
+mean-centered data, principal components, and encoding/decoding functions for
+dimensionality reduction and reconstruction.
+}
+\examples{
+# Example usage
+library(GLarE)
+Y <- matrix(rnorm(100), nrow = 10, ncol = 10)
+pca_model <- learn_pca(Y)
+encoded_data <- pca_model$Encode(Y, k = 3)
+reconstructed_data <- pca_model$Decode(encoded_data)
+
 }
