@@ -261,3 +261,41 @@ plot_gel_reconstruction <- function(GLaRe_output, y) {
   plot_gel(y = Yhat)
   title("Reconstruction")
 }
+
+
+
+#' Simulate Structured Data from a PCA Model
+#'
+#' This function generates structured data by simulating latent factors and loadings
+#' from a PCA model, optionally adding Gaussian noise. The resulting data can be used
+#' to test dimensionality reduction and latent representation methods.
+#'
+#' @param n An integer specifying the number of observations (rows) to generate.
+#' @param p An integer specifying the number of features (columns) in the dataset.
+#' @param k An integer specifying the number of true latent components (rank of the PCA model).
+#' @param noise_sd A numeric value specifying the standard deviation of Gaussian noise
+#'                 to add to the data. Defaults to 0.1.
+#' @param seed An optional integer for setting the random seed to ensure reproducibility.
+#'             Defaults to NULL.
+#' @return A numeric matrix of dimensions `n` x `p` containing the simulated data.
+#' @examples
+#' # Simulate data with 100 observations, 10 features, and 3 latent components
+#' data <- simulate_pca_data(n = 100, p = 10, k = 3, noise_sd = 0.1, seed = 42)
+#'
+#' # Plot the first two features
+#' plot(data[, 1], data[, 2], main = "Scatterplot of First Two Features")
+#'
+#' @export
+simulate_pca_data <- function(n, p, k, noise_sd = 0.1, seed = NULL) {
+  if (!is.null(seed)) set.seed(seed)
+
+  # Generate latent scores and loadings
+  scores <- matrix(rnorm(n * k), nrow = n, ncol = k)
+  loadings <- matrix(rnorm(p * k), nrow = p, ncol = k)
+
+  # Construct data and add Gaussian noise
+  data <- scores %*% t(loadings)
+  data <- data + matrix(rnorm(n * p, sd = noise_sd), nrow = n, ncol = p)
+
+  return(data)
+}
