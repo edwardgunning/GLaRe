@@ -2,15 +2,18 @@
 % Please edit documentation in R/helper-functions.R
 \name{plot_eye_reconstruction}
 \alias{plot_eye_reconstruction}
-\title{Plot a reconstruction of the glaucoma data.}
+\title{Plot Eye Reconstruction}
 \usage{
 plot_eye_reconstruction(GLaRe_output, y)
 }
 \arguments{
-\item{GLaRe_output}{the object returned from a call to the `GLaRE()` function.}
+\item{GLaRe_output}{The object returned from a call to the `GLaRe()` function.}
 
-\item{y}{a 14400-dimensional vector comprising measurements of MPS along `theta = rep(seq(0, 360, length.out = 120)`, each = 120) and `phi = rep(seq(9, 24, length.out = 120), times = 120)`.}
+\item{y}{A 14400-dimensional numeric vector of measurements.}
+}
+\value{
+A ggplot2 object displaying the original and reconstructed data.
 }
 \description{
-Plot a reconstruction of the glaucoma data.
+Visualizes the original and reconstructed glaucoma eye data side by side.
 }

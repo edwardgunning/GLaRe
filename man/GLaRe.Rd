@@ -92,7 +92,7 @@ heatmaps are generated for interpretability.
 \examples{
 data(glaucoma_data)
 result <- GLaRe(
-  mat = glaucoma_data,
+  mat = as.matrix(glaucoma_data),
   latent_dim_from = 1,
   latent_dim_to = 50,
   learn = "pca",

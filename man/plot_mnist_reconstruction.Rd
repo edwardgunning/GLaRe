@@ -2,15 +2,18 @@
 % Please edit documentation in R/helper-functions.R
 \name{plot_mnist_reconstruction}
 \alias{plot_mnist_reconstruction}
-\title{Plot a reconstruction of the mnist data.}
+\title{Plot MNIST Reconstruction}
 \usage{
 plot_mnist_reconstruction(GLaRe_output, y)
 }
 \arguments{
-\item{GLaRe_output}{the object returned from a call to the `GLaRE()` function.}
+\item{GLaRe_output}{The object returned from a call to the `GLaRe()` function.}
 
-\item{y}{a 28 times 28 matrix representing an image from the MNIST dataset.}
+\item{y}{A 28x28 matrix representing an MNIST image.}
+}
+\value{
+A visual comparison of the original and reconstructed MNIST image.
 }
 \description{
-Plot a reconstruction of the mnist data.
+Displays the original and reconstructed MNIST image side by side.
 }

@@ -2,15 +2,18 @@
 % Please edit documentation in R/helper-functions.R
 \name{plot_1D_reconstruction}
 \alias{plot_1D_reconstruction}
-\title{Plot a reconstruction of 1-D (e.g., time series) data.}
+\title{Plot 1D Reconstruction}
 \usage{
 plot_1D_reconstruction(GLaRe_output, Y)
 }
 \arguments{
-\item{GLaRe_output}{the object returned from a call to the `GLaRE()` function.}
+\item{GLaRe_output}{The object returned from a call to the `GLaRe()` function.}
 
-\item{Y}{An n times p matrix containing the n observations for which you want their reconstruction displayed.}
+\item{Y}{An n x p matrix containing n observations to reconstruct.}
+}
+\value{
+A plot comparing the original and reconstructed 1D data.
 }
 \description{
-Plot a reconstruction of 1-D (e.g., time series) data.
+Visualizes original and reconstructed 1D data (e.g., time series).
 }

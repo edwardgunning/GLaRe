@@ -2,10 +2,18 @@
 % Please edit documentation in R/helper-functions.R
 \name{plot_mnist}
 \alias{plot_mnist}
-\title{Helper function to plot a single image from the mnist data.}
+\title{Plot a Single MNIST Image}
 \usage{
 plot_mnist(y, main = NULL)
 }
+\arguments{
+\item{y}{A 28x28 numeric matrix representing an MNIST image.}
+
+\item{main}{Title for the plot. Defaults to NULL.}
+}
+\value{
+A visual plot of the MNIST image.
+}
 \description{
-Helper function to plot a single image from the mnist data.
+Displays an individual MNIST image.
 }

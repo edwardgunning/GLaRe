@@ -2,13 +2,17 @@
 % Please edit documentation in R/helper-functions.R
 \name{plot_train_validation_ratio}
 \alias{plot_train_validation_ratio}
-\title{Plot the ratio of the average training loss to the average validation loss.}
+\title{Plot Training vs Validation Loss Ratio}
 \usage{
 plot_train_validation_ratio(GLaRe_output)
 }
 \arguments{
-\item{GLaRe_output}{the object returned from a call to the `GLaRE()` function.}
+\item{GLaRe_output}{Output object from the `GLaRe()` function.}
+}
+\value{
+A plot showing the training-to-validation loss ratio.
 }
 \description{
-Plot the ratio of the average training loss to the average validation loss.
+Visualizes the ratio of average training loss to average validation loss as a function
+of the number of latent features.
 }

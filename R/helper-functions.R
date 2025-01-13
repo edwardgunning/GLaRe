@@ -1,5 +1,15 @@
+#' Compute 1 - Squared Correlation
+#'
+#' Calculates 1 minus the squared correlation between observed and predicted values.
+#' If `predicted` values are constant, the squared correlation is set to 0.
+#'
+#' @param observed Numeric vector of observed values.
+#' @param predicted Numeric vector of predicted values.
+#' @return Numeric value representing 1 - squared correlation.
+#' @examples
+#' get_one_minus_squared_correlation(c(1, 2, 3), c(1, 2, 2))
 get_one_minus_squared_correlation <- function(observed, predicted) {
-  # check predicted
+  # Handle case where predicted values are constant
   if (length(unique(predicted)) == 1) {
     warning("Predicted values constant: Setting squared correlation to 0")
     return(1)
@@ -8,23 +18,33 @@ get_one_minus_squared_correlation <- function(observed, predicted) {
   }
 }
 
-rep.col <- function(x, n) { # this function repeats a column x n times
+#' Repeat a Column Vector
+#'
+#' Creates a matrix by repeating a column vector `x` `n` times.
+#'
+#' @param x Numeric vector to repeat.
+#' @param n Integer specifying the number of repetitions.
+#' @return A matrix where `x` is repeated `n` times as columns.
+#' @examples
+#' rep.col(c(1, 2, 3), 3)
+rep.col <- function(x, n) {
+  # Repeat x into a matrix with n columns
   matrix(rep(x, each = n), ncol = n, byrow = TRUE)
 }
 
-#' Plot the ratio of the average training loss to the average validation loss.
+#' Plot Training vs Validation Loss Ratio
 #'
-#' @param GLaRe_output the object returned from a call to the `GLaRE()` function.
+#' Visualizes the ratio of average training loss to average validation loss as a function
+#' of the number of latent features.
 #'
-#' @return
+#' @param GLaRe_output Output object from the `GLaRe()` function.
+#' @return A plot showing the training-to-validation loss ratio.
 #' @export
-#'
-#' @examples
-#' @importFrom ggplot2 "ggplot"
 plot_train_validation_ratio <- function(GLaRe_output) {
   breaks <- GLaRe_output[["breaks"]]
   corM_t <- GLaRe_output[["corM_t"]]
   corM_v <- GLaRe_output[["corM_v"]]
+  # Plot the ratio of training loss to validation loss
   plot(
     x = breaks,
     y = corM_t / corM_v,
@@ -36,20 +56,23 @@ plot_train_validation_ratio <- function(GLaRe_output) {
   )
 }
 
-#' Plot the full distribution of individual validation losses.
+#' Plot Distribution of Validation Losses
 #'
-#' @param GLaRe_output the object returned from a call to the `GLaRE()` function.
+#' Creates a jittered strip chart to visualize the distribution of individual validation losses
+#' for different numbers of latent features.
 #'
-#' @return
+#' @param GLaRe_output Output object from the `GLaRe()` function.
+#' @param jitter Amount of jitter to add to the points. Defaults to 0.2.
+#' @param cex Point size for the plot. Defaults to 1.
+#' @return A strip chart of validation losses.
 #' @export
-#'
-#' @examples
 distribution_plot <- function(GLaRe_output, jitter = 0.2, cex = 1) {
   Qrho_v <- GLaRe_output[["Qrho_v"]]
   breaks <- GLaRe_output[["breaks"]]
+  # Plot validation losses as a strip chart
   stripchart(
     x = c(Qrho_v) ~ rep(breaks, each = nrow(Qrho_v)),
-    jitter = 0.2,
+    jitter = jitter,
     method = "jitter",
     col = scales::alpha(seq_along(breaks), 0.25),
     pch = 20,
@@ -60,97 +83,107 @@ distribution_plot <- function(GLaRe_output, jitter = 0.2, cex = 1) {
   )
 }
 
-
-#' Plot the eye glaucoma data.
+#' Plot Glaucoma Eye Data
 #'
-#' @param y a 14400-dimensional vector comprising measurements of MPS along `theta = rep(seq(0, 360, length.out = 120)`, each = 120) and `phi = rep(seq(9, 24, length.out = 120), times = 120)`.
+#' Visualizes glaucoma eye data as a 2D radial projection.
 #'
-#' @return
+#' @param y A 14400-dimensional numeric vector of measurements.
+#' @return A ggplot2 object visualizing the eye data.
 #' @export
-#'
-#' @examples
-#' @import ggplot2
 plot_eye <- function(y) {
-  if (!(is.numeric(y) & length(y) == 120 * 120)) stop("y must be a numeric vector of measurements on theta = rep(seq(0, 360, length.out = 120), each = 120) and phi = rep(seq(9, 24, length.out = 120), times = 120)")
+  # Validate input
+  if (!(is.numeric(y) & length(y) == 120 * 120)) stop("y must be a numeric vector of the correct length")
+
+  # Prepare data for plotting
   plot_df <- data.frame(
     y = y,
     theta = rep(seq(0, 360, length.out = 120), each = 120),
     phi = rep(seq(9, 24, length.out = 120), times = 120)
   )
 
-  p <- ggplot2::ggplot(data = plot_df) +
+  # Create radial plot
+  ggplot2::ggplot(data = plot_df) +
     ggplot2::aes(x = theta, y = phi) +
     ggplot2::coord_radial(inner.radius = 9 / 24, expand = FALSE) +
     ggplot2::geom_tile(mapping = aes(fill = y)) +
     ggplot2::scale_fill_gradientn(colours = rainbow(8), limits = c(-0.352333, 2.020408), oob = scales::squish) +
     ggplot2::labs(fill = expression(X[i](theta, phi)), x = expression(theta), y = expression(phi))
-  p
 }
 
-
-#' Helper function to plot a single image from the mnist data.
+#' Plot a Single MNIST Image
 #'
-#' @param
+#' Displays an individual MNIST image.
 #'
-#' @return
+#' @param y A 28x28 numeric matrix representing an MNIST image.
+#' @param main Title for the plot. Defaults to NULL.
+#' @return A visual plot of the MNIST image.
 #' @export
-#'
-#' @examples
 plot_mnist <- function(y, main = NULL) {
+  # Validate input
   stopifnot(is.matrix(y) & dim(y) == c(28, 28))
-  y <- t(apply(y, c(2), rev))
+  y <- t(apply(y, 2, rev))
+  # Render the image
   image(
     x = 1:28,
     y = 1:28,
     z = y,
     col = gray((0:255) / 255),
     main = main,
-    ann = F,
+    ann = FALSE,
     xaxt = "n",
     yaxt = "n"
   )
 }
 
 
-#' Plot a reconstruction of the glaucoma data.
+#' Plot Eye Reconstruction
 #'
-#' @param GLaRe_output the object returned from a call to the `GLaRE()` function.
-#' @param y a 14400-dimensional vector comprising measurements of MPS along `theta = rep(seq(0, 360, length.out = 120)`, each = 120) and `phi = rep(seq(9, 24, length.out = 120), times = 120)`.
+#' Visualizes the original and reconstructed glaucoma eye data side by side.
 #'
-#' @return
+#' @param GLaRe_output The object returned from a call to the `GLaRe()` function.
+#' @param y A 14400-dimensional numeric vector of measurements.
+#' @return A ggplot2 object displaying the original and reconstructed data.
 #' @export
-#'
-#' @examples
 plot_eye_reconstruction <- function(GLaRe_output, y) {
+  # Extract encoding and decoding functions
   Encode <- function(Y) {
     GLaRe_output$Encode(Y)
   }
   Decode <- GLaRe_output$Decode
+
+  # Prepare data for reconstruction
   Y <- matrix(y, nrow = 1, ncol = GLaRe_output$p)
   recon <- Decode(Ystar = Encode(Y = Y))
   recon_vec <- c(recon[1, ])
+
+  # Generate plots for original and reconstructed data
   p1 <- plot_eye(y = y) + labs(title = "Data") + theme(plot.title = element_text(hjust = 0.5))
   p2 <- plot_eye(y = recon_vec) + labs(title = "Reconstruction") + theme(plot.title = element_text(hjust = 0.5))
+
+  # Arrange plots side by side
   ggpubr::ggarrange(p1, p2, common.legend = TRUE)
 }
 
-
-#' Plot a reconstruction of the mnist data.
+#' Plot MNIST Reconstruction
 #'
-#' @param GLaRe_output the object returned from a call to the `GLaRE()` function.
-#' @param y a 28 times 28 matrix representing an image from the MNIST dataset.
+#' Displays the original and reconstructed MNIST image side by side.
 #'
-#' @return
+#' @param GLaRe_output The object returned from a call to the `GLaRe()` function.
+#' @param y A 28x28 matrix representing an MNIST image.
+#' @return A visual comparison of the original and reconstructed MNIST image.
 #' @export
-#'
-#' @examples
 plot_mnist_reconstruction <- function(GLaRe_output, y) {
+  # Extract encoding and decoding functions
   Encode <- GLaRe_output$Encode
   Decode <- GLaRe_output$Decode
+
+  # Prepare data for reconstruction
   Y <- matrix(y, nrow = 1, ncol = GLaRe_output$p)
   recon <- Decode(Ystar = Encode(Y = Y))
   recon_reshape <- matrix(recon, 28, 28)
   y_mat <- matrix(y, 28, 28)
+
+  # Plot original and reconstructed images
   par(mfrow = c(1, 2))
   plot_mnist(y = y_mat, main = "")
   title(main = "Data")
@@ -158,52 +191,70 @@ plot_mnist_reconstruction <- function(GLaRe_output, y) {
   title(main = "Reconstruction")
 }
 
-#' Plot a reconstruction of 1-D (e.g., time series) data.
+#' Plot 1D Reconstruction
 #'
-#' @param GLaRe_output the object returned from a call to the `GLaRE()` function.
-#' @param Y An n times p matrix containing the n observations for which you want their reconstruction displayed.
-#' @return
+#' Visualizes original and reconstructed 1D data (e.g., time series).
+#'
+#' @param GLaRe_output The object returned from a call to the `GLaRe()` function.
+#' @param Y An n x p matrix containing n observations to reconstruct.
+#' @return A plot comparing the original and reconstructed 1D data.
 #' @export
-#'
-#' @examples
 plot_1D_reconstruction <- function(GLaRe_output, Y) {
+  # Extract encoding and decoding functions
   Encode <- GLaRe_output$Encode
   Decode <- GLaRe_output$Decode
+
+  # Perform reconstruction
   recon <- Decode(Ystar = Encode(Y = Y))
-  matplot(y = t(Y), type = "l", lty = 1)
-  matlines(y = t(recon), type = "l", lty = 3)
+
+  # Plot original and reconstructed data
+  matplot(y = t(Y), type = "l", lty = 1) # Original data
+  matlines(y = t(recon), type = "l", lty = 3) # Reconstructed data
   legend("topright", legend = c("Data", "Reconstruction"), lty = c(1, 3), col = 1)
 }
 
+#' Plot Gel Data
+#'
+#' Visualizes proteomic gels data.
+#'
+#' @param y A 646 x 861 matrix representing gel data.
+#' @return A heatmap of the gel data.
+#' @export
 plot_gel <- function(y) {
-  image(x = seq(0, 1, length.out = 861),
-        y = seq(0, 1, length.out = 646),
-        z = y,
-        col = topo.colors(10),
-        xlab = NA, ylab = NA)
+  # Generate heatmap for the gel data
+  image(
+    x = seq(0, 1, length.out = 861),
+    y = seq(0, 1, length.out = 646),
+    z = y,
+    col = topo.colors(10),
+    xlab = NA, ylab = NA
+  )
 }
 
-#' Plot a reconstruction of gels data.
+#' Plot Gel Reconstruction
 #'
-#' @param GLaRe_output the object returned from a call to the `GLaRE()` function.
-#' @param Y An n times p matrix containing the n observations for which you want their reconstruction displayed.
-#' @return
+#' Visualizes the original and reconstructed proteomic gels data side by side.
+#'
+#' @param GLaRe_output The object returned from a call to the `GLaRe()` function.
+#' @param y A 646 x 861 matrix representing gel data.
+#' @return A visual comparison of the original and reconstructed gel data.
 #' @export
-#'
-#' @examples
 plot_gel_reconstruction <- function(GLaRe_output, y) {
-
+  # Prepare data for reconstruction
   Y <- matrix(y, nrow = 1, ncol = GLaRe_output$p)
 
-
+  # Extract encoding and decoding functions
   Encode <- GLaRe_output$Encode
   Decode <- GLaRe_output$Decode
 
+  # Perform reconstruction
   recon <- Decode(Ystar = Encode(Y = Y))
 
-  Y <- matrix(Y, nrow = 861, ncol = 646)
+  # Reshape data for plotting
+  Y <- matrix(y, nrow = 861, ncol = 646)
   Yhat <- matrix(recon, nrow = 861, ncol = 646)
 
+  # Plot original and reconstructed gel data
   par(mfrow = c(1, 2))
   plot_gel(y = Y)
   title("Data")

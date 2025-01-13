@@ -127,7 +127,7 @@ summary_correlation_plot <- function(out_basisel, cvqlines, cutoff_criterion, r,
 #' @examples
 #' data(glaucoma_data)
 #' result <- GLaRe(
-#'   mat = glaucoma_data,
+#'   mat = as.matrix(glaucoma_data),
 #'   latent_dim_from = 1,
 #'   latent_dim_to = 50,
 #'   learn = "pca",
@@ -193,7 +193,11 @@ GLaRe <- function(
     y = seq(0, 1, length.out = n),
     z = log10(out$Qrho_v),
     type = "heatmap",
-    colors = "RdYlGn",
+    colorscale = list(
+      list(0, "green"), # Start color (was red)
+      list(0.5, "yellow"), # Middle color
+      list(1, "red") # End color (was green)
+    )
   ) %>%
     plotly::layout(
       # title = "Squared Correlation Heatmap",

@@ -2,15 +2,18 @@
 % Please edit documentation in R/helper-functions.R
 \name{plot_gel_reconstruction}
 \alias{plot_gel_reconstruction}
-\title{Plot a reconstruction of gels data.}
+\title{Plot Gel Reconstruction}
 \usage{
 plot_gel_reconstruction(GLaRe_output, y)
 }
 \arguments{
-\item{GLaRe_output}{the object returned from a call to the `GLaRE()` function.}
+\item{GLaRe_output}{The object returned from a call to the `GLaRe()` function.}
 
-\item{Y}{An n times p matrix containing the n observations for which you want their reconstruction displayed.}
+\item{y}{A 646 x 861 matrix representing gel data.}
+}
+\value{
+A visual comparison of the original and reconstructed gel data.
 }
 \description{
-Plot a reconstruction of gels data.
+Visualizes the original and reconstructed proteomic gels data side by side.
 }
