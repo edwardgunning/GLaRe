@@ -18,14 +18,83 @@ flf_basissel(
 )
 }
 \arguments{
-\item{mat}{an n times p data matrix.}
+\item{mat}{An n x p data matrix, where rows correspond to observations and columns correspond to variables.
+- When `learn = "dwt.2d"`, `mat` must be a 3-dimensional array (n x p1 x p2), where each slice represents an image.}
 
-\item{kf}{k, the number of folds in k-fold cross-validation,}
+\item{learn}{A character string specifying the feature representation method to use. Options include:
+- "pca": Principal Component Analysis
+- "dwt": Discrete Wavelet Transform
+- "dwt.2d": Two-dimensional Discrete Wavelet Transform (for image data)
+- "ae": Autoencoder
+- "user": User-defined function provided via `learn_function`.}
 
-\item{center}{Whether or not the data should be mean-centered prior to performing the latent feature transformation.}
+\item{ae_args}{A list of arguments for training autoencoders (used when `learn = "ae"`).}
 
-\item{scale}{Whether the data should be scaled prior to analysis, so that each variable has standard deviation 1.}
+\item{kf}{An integer specifying the number of folds in k-fold cross-validation.}
+
+\item{latent_dim_from}{The starting value for the range of latent dimensions to evaluate. Default is 1.}
+
+\item{latent_dim_to}{The maximum number of latent dimensions to evaluate. Default is the minimum of the number of columns in `mat` and the number of rows minus one.}
+
+\item{latent_dim_by}{The increment step for latent dimensions. Default is 1.}
+
+\item{loss_function}{A function to compute the loss between the original and reconstructed data. Default is `get_one_minus_squared_correlation`.}
+
+\item{learn_function}{A user-defined function for feature representation. Required when `learn = "user"`.}
+
+\item{verbose}{A logical value indicating whether progress messages should be printed. Default is `TRUE`.}
+}
+\value{
+A list containing:
+  - `corM_t`: Training loss values for each latent dimension.
+  - `corM_v`: Cross-validation loss values for each latent dimension.
+  - `rho_v`: Observation-wise loss values for each fold and latent dimension.
+  - `Qrho_v`: Sorted version of `rho_v` for heatmap visualization.
+  - `breaks`: The evaluated latent dimensions.
+  - `n`: Number of observations in the input data matrix.
+  - `p`: Number of variables in the input data matrix.
+  - `r`: Maximum latent dimension evaluated during cross-validation.
+  - `q`: Total number of latent dimensions evaluated.
 }
 \description{
-Assess losslessness of general feature representation.
+This function evaluates the losslessness of feature representation methods
+(e.g., PCA, wavelets, autoencoders) by assessing reconstruction quality
+over varying latent dimensions and cross-validation folds.
+}
+\examples{
+# Load the GLaRe package
+library(GLaRe)
+
+# Generate structured data with correlated variables
+set.seed(123)
+n <- 100  # Number of observations
+p <- 10   # Number of variables
+
+# Create a dataset with latent structure
+latent_factors <- matrix(rnorm(n * 3), nrow = n, ncol = 3)  # 3 latent factors
+loadings <- matrix(runif(3 * p, min = 0.5, max = 1.5), nrow = 3, ncol = p)
+noise <- matrix(rnorm(n * p, sd = 0.1), nrow = n, ncol = p)
+
+# Combine to form data matrix with latent structure
+mat <- latent_factors \%*\% loadings + noise
+
+# Example usage with PCA
+results <- flf_basissel(
+  mat = mat,
+  learn = "pca",
+  kf = 5,
+  latent_dim_from = 1,
+  latent_dim_to = 5,
+  loss_function = get_one_minus_squared_correlation
+)
+
+# Example usage with Autoencoder
+ae_args <- list(epochs = 10, batch_size = 16)
+results_ae <- flf_basissel(
+  mat = mat,
+  learn = "ae",
+  ae_args = ae_args,
+  kf = 5,
+  latent_dim_to = 5
+)
 }

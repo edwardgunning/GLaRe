@@ -66,28 +66,79 @@ summary_correlation_plot <- function(out_basisel, cvqlines, cutoff_criterion, r,
 }
 
 
-#' Assess losslessness of a latent feature representation method using k-fold cross-validation.
+#' Assess Losslessness of a Latent Feature Representation Method using k-Fold Cross-Validation
 #'
-#' @param mat An n-by-p data matrix (n observations, p variables).
-#' @param latent_dim_from An integer used to define the start of the sequence of the number of latent features to be defined as `seq(from = latent_dim_from, to = latent_dim_to, by = latent_dim_by)`, defaults to 1.
-#' @param latent_dim_to An integer used to define the end of the sequence of the number of latent features to be defined as `seq(from = latent_dim_from, to = latent_dim_to, by = latent_dim_by)` defaults to `min(ncol(mat) - 1, nrow(mat) - 1)`.
-#' @param latent_dim_by An integer used to define the increment of the sequence of the number of latent features to be defined as `seq(from = latent_dim_from, to = latent_dim_to, by = latent_dim_by)`, defaults to 1.
-#' @param learn The latent feature representation method chosen, one of c("pca", "dwt", "dwt.2d", "ae", "user"). Defaults to "pca" for principal component analysis (PCA).
-#' @param kf An integer defining the number of folds for the k-fold cross-validation.
-#' @param method_name The name of the method to be featured on the plot title. Defaults to `toupper(learn)`.
-#' @param cvqlines The user-specified quantile of the cross-validated loss distribution to display on the plot.
-#' @param ae_args Only to be specified if `learn = "ae"`, a list containing the following named elements to define the architecture and training: `layer_1_dim`, `link_fun`, `epochs`, `loss` and `batch_size`.
-#' @param tolerance_level A (typically small) value that we want a quantile (defined by `cutoff_criterion`) of our individual cross-validated losses to be less than (called $\epsilon$ in paper). For example, `tolerance_level = 0.05` and `cutoff_criterion = 0.95` means that we would want 95\% of individual cross-validated losses to be below 0.05. Defaults to 0.05.
-#' @param cutoff_criterion A (typically large) quantile (called $\alpha$ in paper) such that we want this quantile of individual cross-validated losses to be less than the value defined by `tolerance_level`. For example, `tolerance_level = 0.05` and `cutoff_criterion = 0.95` means that we would want 95\% of individual cross-validated losses to be below 0.05. Defaults to 0.05.
-#' @param learn_function a function only to be supplied if `learn = user`, a user-defined function that takes arguments `Y` (data matrix) and `k` (latent dimension) and returns a list containing two elements `Encode` and `Decode` which define the custom encoding and decoding transformations, respectively.
-#' @param verbose logical, whether to print output to console during training and cross-validation. Defaults to `TRUE`.
+#' The `GLaRe` function evaluates the quality of latent feature representation methods by estimating
+#' the distribution of information loss through k-fold cross-validation. It identifies the qualifying
+#' dimension (qd) where a user-defined quantile of the loss distribution meets a tolerance level,
+#' providing a compact and interpretable representation. Visualizations such as scree plots and
+#' heatmaps are generated for interpretability.
 #'
-#' @return
-#' @returns
+#' @param mat An n-by-p data matrix where `n` represents the number of observations, and `p` represents
+#'        the number of features.
+#' @param latent_dim_from An integer specifying the starting point of the latent feature dimension
+#'        range. Defaults to 1.
+#' @param latent_dim_to An integer specifying the ending point of the latent feature dimension
+#'        range. Defaults to `min(ncol(mat) - 1, nrow(mat) - 1)`.
+#' @param latent_dim_by An integer defining the step size for increments in the latent feature dimension
+#'        range. Defaults to 1.
+#' @param learn A string specifying the latent feature representation method. Options are:
+#'        \itemize{
+#'          \item `"pca"`: Principal Component Analysis.
+#'          \item `"dwt"`: Discrete Wavelet Transform.
+#'          \item `"dwt.2d"`: Two-dimensional Discrete Wavelet Transform.
+#'          \item `"ae"`: Autoencoder.
+#'          \item `"user"`: User-defined custom method (requires `learn_function` parameter).
+#'        }
+#'        Defaults to `"pca"`.
+#' @param method_name A string for the name of the method to feature on plot titles. Defaults to
+#'        `toupper(learn)`.
+#' @param kf An integer specifying the number of folds for k-fold cross-validation. Defaults to 5.
+#' @param cvqlines A numeric value between 0 and 1 specifying the quantile of the cross-validated
+#'        loss distribution to display on the scree plot. Defaults to 0.9.
+#' @param ae_args A list of parameters for autoencoder training, used only if `learn = "ae"`. Must include:
+#'        \itemize{
+#'          \item `layer_1_dim`: Number of nodes in the hidden layer.
+#'          \item `link_fun`: Activation function for the autoencoder.
+#'          \item `epochs`: Number of training epochs.
+#'          \item `loss`: Loss function to optimize.
+#'          \item `batch_size`: Mini-batch size for training.
+#'        }
+#' @param tolerance_level A numeric value specifying the maximum allowable loss for a specified quantile
+#'        of observations. Defaults to 0.05.
+#' @param cutoff_criterion A numeric value (between 0 and 1) defining the quantile of observations for
+#'        which the tolerance level must be met. Defaults to 0.95.
+#' @param learn_function A custom function for encoding and decoding, required if `learn = "user"`.
+#'        The function must take arguments `Y` (data matrix) and `k` (latent dimension) and return a
+#'        list containing `Encode` and `Decode` functions.
+#' @param verbose Logical; if `TRUE`, progress messages are printed during training and evaluation.
+#'        Defaults to `TRUE`.
+#'
+#' @return A list containing:
+#' \itemize{
+#'   \item `qd`: The qualifying dimension where the loss meets the specified tolerance level.
+#'   \item `Encode`: Encoding function for the latent representation (if `qd` is found).
+#'   \item `Decode`: Decoding function for reconstructing data from the latent representation.
+#'   \item `heatmap`: A Plotly heatmap of information loss across latent dimensions and quantiles.
+#' }
 #' @export
 #' @importFrom magrittr "%>%"
 #'
 #' @examples
+#' data(glaucoma_data)
+#' result <- GLaRe(
+#'   mat = glaucoma_data,
+#'   latent_dim_from = 1,
+#'   latent_dim_to = 50,
+#'   learn = "pca",
+#'   kf = 5,
+#'   tolerance_level = 0.05,
+#'   cutoff_criterion = 0.95,
+#'   verbose = TRUE
+#' )
+#'
+#' @seealso \code{\link{summary_correlation_plot}}, \code{\link{plot_train_validation_ratio}}
+
 GLaRe <- function(
     mat = as.matrix(glaucoma_data),
     latent_dim_from = 1,
