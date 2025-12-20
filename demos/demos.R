@@ -134,7 +134,7 @@ PH_dwt <- GLaRe(
 
 
 par(mfrow = c(1, 2))
-GLarE:::plot_train_validation_ratio(GLaRe_output = PH_dwt)
-GLarE:::plot_train_validation_ratio(GLaRe_output = PH_pca)
+GLaRe:::plot_train_validation_ratio(GLaRe_output = PH_dwt)
+GLaRe:::plot_train_validation_ratio(GLaRe_output = PH_pca)
 
 

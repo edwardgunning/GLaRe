@@ -25,7 +25,7 @@ The goal of `GLaRE` is to facilitate the evaluation of losslessness of different
 
 ## Installation
 
-You can install the development version of GLarE from [GitHub](https://github.com/) with:
+You can install the development version of GLaRe from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
@@ -35,7 +35,7 @@ devtools::install_github("edwardgunning/GLaRe")
 Load the `GLaRE` package.
 
 ```{r example}
-library(GLarE)
+library(GLaRe)
 ```
 
 Set random seed for both shuffling folds and stochastic optimisation of the autoencoder model.

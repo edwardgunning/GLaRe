@@ -33,7 +33,7 @@ and reconstruct it back to the original space.
 }
 \examples{
 # Example: Simulated Data from a PCA Model
-library(GLarE)
+library(GLaRe)
 set.seed(1996)
 
 # Simulate data from a PCA model

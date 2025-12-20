@@ -25,7 +25,7 @@ dimensionality reduction and reconstruction.
 }
 \examples{
 # Example usage
-library(GLarE)
+library(GLaRe)
 Y <- matrix(rnorm(100), nrow = 10, ncol = 10)
 pca_model <- learn_pca(Y)
 encoded_data <- pca_model$Encode(Y, k = 3)

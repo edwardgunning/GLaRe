@@ -1,4 +1,4 @@
-Package: GLarE
+Package: GLaRe
 Type: Package
 Title: A Graphical Latent Feature Representation Tool
 Version: 0.1.0
@@ -12,6 +12,6 @@ Description: A Graphical Latent Feature Representation Tool
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.3
 Depends: 
     R (>= 2.10)

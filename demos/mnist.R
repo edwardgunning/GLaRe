@@ -1,4 +1,4 @@
-library(GLarE)
+library(GLaRe)
 mnist <- keras::dataset_mnist()
 ## normalize so the range is (0,1)
 x_train <- mnist$train$x/255

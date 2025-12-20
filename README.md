@@ -1,17 +1,21 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 <!-- badges: start -->
+
 <center>
+
 <img src="inst/figures/hex.png" alt="hex" width="200"/>
 </center>
+
 <!-- badges: end -->
 
 The goal of `GLaRE` is to facilitate the evaluation of losslessness of
-different latent feature representations based on generalisation error…
+different latent feature representations based on generalisation error.
 
 ## Installation
 
-You can install the development version of GLarE from
+You can install the development version of GLaRe from
 [GitHub](https://github.com/) with:
 
 ``` r
@@ -22,7 +26,7 @@ devtools::install_github("edwardgunning/GLaRe")
 Load the `GLaRE` package.
 
 ``` r
-library(GLarE)
+library(GLaRe)
 ```
 
 Set random seed for both shuffling folds and stochastic optimisation of
@@ -311,9 +315,6 @@ glaucoma_pca <- GLaRe(
 #> [1] "= Latent Dim. = 241"
 #> [1] "====== Finished 5-fold CV, Summarising Results ======="
 #> [1] "Final training of Model at qualifying criterion:"
-```
-
-``` r
 
 glaucoma_reshaped <- array(glaucoma, dim = c(nrow(glaucoma), 120, 120))
 glaucoma_dwt.2d <- GLaRe(
@@ -1097,9 +1098,6 @@ glaucoma_dwt.2d <- GLaRe(
 #> Warning in loss_function(observed = as.matrix(mat)[i, ], predicted =
 #> as.matrix(x)[i, : Predicted values constant: Setting squared correlation to 0
 #> [1] "Final training of Model at qualifying criterion:"
-```
-
-``` r
 
 # glaucoma_ae <- GLaRe(
 #   mat = glaucoma,
@@ -1141,6 +1139,8 @@ plot_train_validation_ratio(GLaRe_output = glaucoma_dwt.2d)
 
 ``` r
 mnist <- keras::dataset_mnist()
+#> Downloading data from https://storage.googleapis.com/tensorflow/tf-keras-datasets/mnist.npz
+#> [1m       0/11490434[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 0s/step[1m   57344/11490434[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m10s[0m 1us/step[1m  229376/11490434[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m5s[0m 0us/step [1m  598016/11490434[0m [32m━[0m[37m━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 0us/step[1m 1425408/11490434[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m1s[0m 0us/step[1m 3571712/11490434[0m [32m━━━━━━[0m[37m━━━━━━━━━━━━━━[0m [1m0s[0m 0us/step[1m 6258688/11490434[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 0us/step[1m 8110080/11490434[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 0us/step[1m10887168/11490434[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 0us/step[1m11490434/11490434[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 0us/step
 ## normalize so the range is (0,1)
 mnist_train <- mnist$train$x/255
 mnist_train_flattened <- matrix(mnist_train, nrow(mnist_train), 784)

@@ -1,4 +1,4 @@
-library(GLarE)
+library(GLaRe)
 
 # Set Random Seed: --------------------------------------------------------
 tensorflow::set_random_seed(seed = 1996)
