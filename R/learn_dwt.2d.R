@@ -55,7 +55,6 @@ waveslim_dwt.2d_to_mat <- function(Y) {
 }
 
 
-
 idwt.2d_vec <- function(d, ppad, ppad_left, ppad_right, qpad, qpad_left, qpad_right) {
   Ynull <- matrix(data = 0, nrow = ppad, ncol = qpad)
   n.levels <- log2(min(ppad, qpad))
@@ -106,11 +105,9 @@ idwt.2d_array <- function(D, ppad, ppad_left, ppad_right, qpad, qpad_left, qpad_
 #' Reconstruction is performed using the inverse 2-D DWT.
 #'
 #' @examples
-#'
 #' @importFrom waveslim dwt.2d idwt.2d
 #' @export
 learn_dwt.2d <- function(Y, p1, p2) {
-
   stopifnot(ncol(Y) == p1 * p2)
   n <- nrow(Y)
   Y <- array(Y, dim = c(n, p1, p2))

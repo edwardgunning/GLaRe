@@ -39,11 +39,11 @@
 #'
 #' # Generate structured data with correlated variables
 #' set.seed(123)
-#' n <- 100  # Number of observations
-#' p <- 10   # Number of variables
+#' n <- 100 # Number of observations
+#' p <- 10 # Number of variables
 #'
 #' # Create a dataset with latent structure
-#' latent_factors <- matrix(rnorm(n * 3), nrow = n, ncol = 3)  # 3 latent factors
+#' latent_factors <- matrix(rnorm(n * 3), nrow = n, ncol = 3) # 3 latent factors
 #' loadings <- matrix(runif(3 * p, min = 0.5, max = 1.5), nrow = 3, ncol = p)
 #' noise <- matrix(rnorm(n * p, sd = 0.1), nrow = n, ncol = p)
 #'
@@ -69,17 +69,15 @@
 #'   kf = 5,
 #'   latent_dim_to = 5
 #' )
-
 flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_dim_to = min(ncol(mat), nrow(mat) - 1), latent_dim_by = 1, loss_function = get_one_minus_squared_correlation, learn_function = NULL, verbose = TRUE) {
-
   # add arguments check(s).
-  if(learn == "user" & is.null(learn_function)) stop("learn_function must be supplied if learn = 'user'.")
-  if(learn == "user") {
-    if(class(learn_function) != "function") stop("learn_function() must be a function.")
+  if (learn == "user" & is.null(learn_function)) stop("learn_function must be supplied if learn = 'user'.")
+  if (learn == "user") {
+    if (class(learn_function) != "function") stop("learn_function() must be a function.")
   }
 
   # Data matrix and its dimensions. -----------------------------------------
-  if(learn == "dwt.2d") {
+  if (learn == "dwt.2d") {
     if (!(class(mat) == "array" & length(dim(mat)) == 3)) {
       stop("When learn = 'dwt.2d', mat must be a 3-dimensional array, where each slice is an image.")
     }
@@ -89,17 +87,17 @@ flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_di
     p1 <- arr_dims[2]
     p2 <- arr_dims[3]
     p <- p1 * p2
-    if(latent_dim_to == p1) latent_dim_to <- p # temporary fix for now.
+    if (latent_dim_to == p1) latent_dim_to <- p # temporary fix for now.
     mat <- matrix(arr, nrow = n, ncol = p)
   } else {
-    if(!("matrix" %in% class(mat))) stop("mat must be an n times p data matrix")
+    if (!("matrix" %in% class(mat))) stop("mat must be an n times p data matrix")
     n <- nrow(mat)
     p <- ncol(mat)
   }
 
   # Set up sequence for latent dimensions: ----------------------------------
   breaks <- seq(from = latent_dim_from, to = latent_dim_to, by = latent_dim_by)
-  breaks <- if(learn == "pca") {
+  breaks <- if (learn == "pca") {
     breaks[which(breaks <= min(n - 1, p))]
   } else {
     breaks[which(breaks <= p)]
@@ -113,8 +111,8 @@ flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_di
   } else if (learn == "dwt.2d") {
     learn_function <- function(Y) {
       learn_dwt.2d(Y = Y, p1 = p1, p2 = p2)
-      }
-    } else if (learn == "ae") {
+    }
+  } else if (learn == "ae") {
     learn_function <- function(Y, k) {
       learn_ae(Y = Y, k = k, ae_args = ae_args)
     }
@@ -127,8 +125,8 @@ flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_di
     Decode <- LearnOut[["Decode"]]
   }
 
-  if(learn == "pca") {
-    if(!all(breaks <= ncol(LearnOut[["phi_t"]]))) print("Number of non-zero eigenvectors is less than latent_dim_to")
+  if (learn == "pca") {
+    if (!all(breaks <= ncol(LearnOut[["phi_t"]]))) print("Number of non-zero eigenvectors is less than latent_dim_to")
     breaks <- breaks[which(breaks <= ncol(LearnOut[["phi_t"]]))]
   }
 
@@ -149,7 +147,7 @@ flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_di
       proj_t <- learnout_j[["Decode"]](learnout_j[["Encode"]](mat))
     }
     corM_t[j] <- loss_function(observed = c(mat), predicted = c(proj_t))
-    if(learn == "ae") {
+    if (learn == "ae") {
       keras::k_clear_session()
       rm(learnout_j)
       gc(verbose = FALSE)
@@ -159,20 +157,17 @@ flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_di
   }
 
 
-
-
-
   # Do Cross-Validation: ----------------------------------------------------
   if (verbose) print(paste0("====== Performing ", kf, "-fold CV ======="))
 
   n_cv <- floor(n - n / kf) # sample sizes for each cv training
 
   # dimensionality for cross validation.
-  r <- if(learn == "pca") {
+  r <- if (learn == "pca") {
     max(which(breaks <= min(n_cv - 1, p))) # maximum dimensionality for PCA.
   } else {
     max(which(breaks <= p))
-    }
+  }
 
   proj_v <- array(NA, c(n, p, q)) # to store the cross-validation predictions
   rho_v <- array(NA, c(n, q)) # to store the individual observations correlations between cross-validation predictions and data for each latent dimension
@@ -189,9 +184,9 @@ flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_di
     # Loop through folds:
     if (verbose) print(paste("==== Fold ", i, "===="))
     kind <- which(folds == i, arr.ind = TRUE)
-    mati <- mat[kind,, drop = FALSE]
+    mati <- mat[kind, , drop = FALSE]
     if (learn %in% c("pca", "dwt", "dwt.2d")) {
-      LearnOutv <- learn_function(Y = mat[-kind,, drop = FALSE])
+      LearnOutv <- learn_function(Y = mat[-kind, , drop = FALSE])
       Encodev <- LearnOutv[["Encode"]]
       Decodev <- LearnOutv[["Decode"]]
     }
@@ -201,14 +196,14 @@ flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_di
       if (learn %in% c("pca", "dwt", "dwt.2d")) {
         proj_v[kind, , j] <- Decodev(Encodev(Y = mati, k = breaks[j]))
       } else {
-        learnout_v_j <- learn_function(Y = mat[-kind,, drop = FALSE], k = breaks[j])
+        learnout_v_j <- learn_function(Y = mat[-kind, , drop = FALSE], k = breaks[j])
         proj_v[kind, , j] <- learnout_v_j[["Decode"]](learnout_v_j[["Encode"]](mati))
       }
-      if(learn == "ae") {
+      if (learn == "ae") {
         keras::k_clear_session()
         rm(learnout_v_j)
         gc(verbose = FALSE)
-        }
+      }
     }
   }
 

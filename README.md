@@ -224,7 +224,8 @@ glaucoma_pca <- GLaRe(
   cutoff_criterion = 0.95,
   tolerance_level = 0.05,
   latent_dim_by = 20,
-  latent_dim_to = 500)
+  latent_dim_to = 500
+)
 #> [1] "*** Learning Method: pca ***"
 #> [1] "Number of non-zero eigenvectors is less than latent_dim_to"
 #> [1] "====== Training ======"
@@ -325,7 +326,8 @@ glaucoma_dwt.2d <- GLaRe(
   cutoff_criterion = 0.95,
   tolerance_level = 0.05,
   latent_dim_by = 20,
-  latent_dim_to = 500)
+  latent_dim_to = 500
+)
 #> [1] "*** Learning Method: dwt.2d ***"
 #> [1] "====== Training ======"
 #> [1] "= Latent Dim. = 1"
@@ -1139,10 +1141,8 @@ plot_train_validation_ratio(GLaRe_output = glaucoma_dwt.2d)
 
 ``` r
 mnist <- keras::dataset_mnist()
-#> Downloading data from https://storage.googleapis.com/tensorflow/tf-keras-datasets/mnist.npz
-#> [1m       0/11490434[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 0s/step[1m   57344/11490434[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m10s[0m 1us/step[1m  229376/11490434[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m5s[0m 0us/step [1m  598016/11490434[0m [32m━[0m[37m━━━━━━━━━━━━━━━━━━━[0m [1m2s[0m 0us/step[1m 1425408/11490434[0m [32m━━[0m[37m━━━━━━━━━━━━━━━━━━[0m [1m1s[0m 0us/step[1m 3571712/11490434[0m [32m━━━━━━[0m[37m━━━━━━━━━━━━━━[0m [1m0s[0m 0us/step[1m 6258688/11490434[0m [32m━━━━━━━━━━[0m[37m━━━━━━━━━━[0m [1m0s[0m 0us/step[1m 8110080/11490434[0m [32m━━━━━━━━━━━━━━[0m[37m━━━━━━[0m [1m0s[0m 0us/step[1m10887168/11490434[0m [32m━━━━━━━━━━━━━━━━━━[0m[37m━━[0m [1m0s[0m 0us/step[1m11490434/11490434[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 0us/step
 ## normalize so the range is (0,1)
-mnist_train <- mnist$train$x/255
+mnist_train <- mnist$train$x / 255
 mnist_train_flattened <- matrix(mnist_train, nrow(mnist_train), 784)
 ```
 
@@ -1156,7 +1156,8 @@ mnist_pca <- GLaRe(
   cutoff_criterion = 0.95,
   tolerance_level = 0.05,
   latent_dim_by = 20,
-  latent_dim_to = 500)
+  latent_dim_to = 500
+)
 
 mnist_dwt.2d <- GLaRe(
   mat = mnist_train,
@@ -1166,7 +1167,8 @@ mnist_dwt.2d <- GLaRe(
   cutoff_criterion = 0.95,
   tolerance_level = 0.05,
   latent_dim_by = 20,
-  latent_dim_to = 500)
+  latent_dim_to = 500
+)
 
 # mnist_ae <- GLaRe(
 #   mat = mnist_train_flattened,

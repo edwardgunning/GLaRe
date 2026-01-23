@@ -112,7 +112,6 @@ idwt_mat <- function(D, ppad, ppad_left, ppad_right) {
 #' thresholding mechanism retains the `k` most important coefficients for encoding.
 #'
 #' @examples
-#'
 #' @importFrom waveslim dwt idwt
 #' @export
 learn_dwt <- function(Y) {

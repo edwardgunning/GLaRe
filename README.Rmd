@@ -207,7 +207,8 @@ glaucoma_pca <- GLaRe(
   cutoff_criterion = 0.95,
   tolerance_level = 0.05,
   latent_dim_by = 20,
-  latent_dim_to = 500)
+  latent_dim_to = 500
+)
 
 glaucoma_reshaped <- array(glaucoma, dim = c(nrow(glaucoma), 120, 120))
 glaucoma_dwt.2d <- GLaRe(
@@ -218,7 +219,8 @@ glaucoma_dwt.2d <- GLaRe(
   cutoff_criterion = 0.95,
   tolerance_level = 0.05,
   latent_dim_by = 20,
-  latent_dim_to = 500)
+  latent_dim_to = 500
+)
 
 # glaucoma_ae <- GLaRe(
 #   mat = glaucoma,
@@ -254,7 +256,7 @@ plot_train_validation_ratio(GLaRe_output = glaucoma_dwt.2d)
 ```{r}
 mnist <- keras::dataset_mnist()
 ## normalize so the range is (0,1)
-mnist_train <- mnist$train$x/255
+mnist_train <- mnist$train$x / 255
 mnist_train_flattened <- matrix(mnist_train, nrow(mnist_train), 784)
 ```
 
@@ -269,7 +271,8 @@ mnist_pca <- GLaRe(
   cutoff_criterion = 0.95,
   tolerance_level = 0.05,
   latent_dim_by = 20,
-  latent_dim_to = 500)
+  latent_dim_to = 500
+)
 
 mnist_dwt.2d <- GLaRe(
   mat = mnist_train,
@@ -279,7 +282,8 @@ mnist_dwt.2d <- GLaRe(
   cutoff_criterion = 0.95,
   tolerance_level = 0.05,
   latent_dim_by = 20,
-  latent_dim_to = 500)
+  latent_dim_to = 500
+)
 
 # mnist_ae <- GLaRe(
 #   mat = mnist_train_flattened,

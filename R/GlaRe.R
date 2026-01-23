@@ -140,22 +140,22 @@ summary_correlation_plot <- function(out_basisel, cvqlines, cutoff_criterion, r,
 #' @seealso \code{\link{summary_correlation_plot}}, \code{\link{plot_train_validation_ratio}}
 
 GLaRe <- function(
-    mat = as.matrix(glaucoma_data),
-    latent_dim_from = 1,
-    latent_dim_to = min(ncol(mat), nrow(mat) - 1),
-    latent_dim_by = 1,
-    learn = "pca",
-    method_name = toupper(learn),
-    kf = 5,
-    cvqlines = 0.9,
-    ae_args = list(),
-    tolerance_level = 0.05,
-    cutoff_criterion = 0.95,
-    learn_function = NULL,
-    verbose = TRUE) {
-
+  mat = as.matrix(glaucoma_data),
+  latent_dim_from = 1,
+  latent_dim_to = min(ncol(mat), nrow(mat) - 1),
+  latent_dim_by = 1,
+  learn = "pca",
+  method_name = toupper(learn),
+  kf = 5,
+  cvqlines = 0.9,
+  ae_args = list(),
+  tolerance_level = 0.05,
+  cutoff_criterion = 0.95,
+  learn_function = NULL,
+  verbose = TRUE
+) {
   # start:
-  if(verbose) {
+  if (verbose) {
     print(paste("*** Learning Method:", learn, "***"))
   }
   # apply training and cross validation for basis selection:
@@ -176,19 +176,21 @@ GLaRe <- function(
   }
 
   # Loss-lessness (Scree) Plot:  ---------------------------------------------
-  summary_correlation_plot(out_basisel = out,
-                           cvqlines = cvqlines,
-                           cutoff_criterion = cutoff_criterion,
-                           r = r,
-                           q = q,
-                           breaks = breaks,
-                           method_name = method_name,
-                           qd = qd,
-                           tolerance_level = tolerance_level)
+  summary_correlation_plot(
+    out_basisel = out,
+    cvqlines = cvqlines,
+    cutoff_criterion = cutoff_criterion,
+    r = r,
+    q = q,
+    breaks = breaks,
+    method_name = method_name,
+    qd = qd,
+    tolerance_level = tolerance_level
+  )
 
 
   # Heatmap: ----------------------------------------------------------------
- heat_map <- plotly::plot_ly(
+  heat_map <- plotly::plot_ly(
     x = breaks,
     y = seq(0, 1, length.out = n),
     z = log10(out$Qrho_v),
@@ -213,22 +215,21 @@ GLaRe <- function(
     )
 
 
-
   # Return Decode and Encode: -----------------------------------------------
   # Only if qualifying criterion is met:
-  if(!is.na(qd)) {
-    if(verbose) {
+  if (!is.na(qd)) {
+    if (verbose) {
       print("Final training of Model at qualifying criterion:")
     }
 
-    if(learn == "dwt.2d") {
-    arr <- mat
-    arr_dims <- dim(arr)
-    n <- arr_dims[1]
-    p1 <- arr_dims[2]
-    p2 <- arr_dims[3]
-    p <- p1 * p2
-    mat <- matrix(arr, nrow = n, ncol = p)
+    if (learn == "dwt.2d") {
+      arr <- mat
+      arr_dims <- dim(arr)
+      n <- arr_dims[1]
+      p1 <- arr_dims[2]
+      p2 <- arr_dims[3]
+      p <- p1 * p2
+      mat <- matrix(arr, nrow = n, ncol = p)
     }
 
     if (learn == "pca") {
@@ -256,8 +257,7 @@ GLaRe <- function(
     }
 
     out[["Decode"]] <- learn_final[["Decode"]]
-
-  } else if(is.na(qd)){
+  } else if (is.na(qd)) {
     out[["Encode"]] <- NA
     out[["Decode"]] <- NA
   }

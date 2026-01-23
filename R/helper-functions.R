@@ -263,7 +263,6 @@ plot_gel_reconstruction <- function(GLaRe_output, y) {
 }
 
 
-
 #' Simulate Structured Data from a PCA Model
 #'
 #' This function generates structured data by simulating latent factors and loadings
