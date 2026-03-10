@@ -85,10 +85,11 @@ results <- flf_basissel(
   kf = 5,
   latent_dim_from = 1,
   latent_dim_to = 5,
-  loss_function = get_one_minus_squared_correlation
+  verbose = FALSE
 )
 
 # Example usage with Autoencoder
+\dontrun{
 ae_args <- list(epochs = 10, batch_size = 16)
 results_ae <- flf_basissel(
   mat = mat,
@@ -97,4 +98,5 @@ results_ae <- flf_basissel(
   kf = 5,
   latent_dim_to = 5
 )
+}
 }

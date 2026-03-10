@@ -57,10 +57,11 @@
 #'   kf = 5,
 #'   latent_dim_from = 1,
 #'   latent_dim_to = 5,
-#'   loss_function = get_one_minus_squared_correlation
+#'   verbose = FALSE
 #' )
 #'
 #' # Example usage with Autoencoder
+#' \dontrun{
 #' ae_args <- list(epochs = 10, batch_size = 16)
 #' results_ae <- flf_basissel(
 #'   mat = mat,
@@ -69,6 +70,7 @@
 #'   kf = 5,
 #'   latent_dim_to = 5
 #' )
+#' }
 flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_dim_to = min(ncol(mat), nrow(mat) - 1), latent_dim_by = 1, loss_function = get_one_minus_squared_correlation, learn_function = NULL, verbose = TRUE) {
   # add arguments check(s).
   if (learn == "user" & is.null(learn_function)) stop("learn_function must be supplied if learn = 'user'.")

@@ -37,13 +37,12 @@ DTI_user <- GLaRe(
   learn_function = learn_Bspline,
   method_name = "B-splines")
 
-plot_1D_reconstruction(DT)
+plot_1D_reconstruction(GLaRe_output = DTI_user, Y = DTI)
 
 DTI_user <- GLaRe(
   mat = DTI,
   learn = "pca",
   kf = 20,
-  sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.9,
   attainment_rate = 0.95,
   tolerance_level = 0.05,

@@ -5,7 +5,7 @@
 \title{Assess Losslessness of a Latent Feature Representation Method using k-Fold Cross-Validation}
 \usage{
 GLaRe(
-  mat = as.matrix(glaucoma_data),
+  mat,
   latent_dim_from = 1,
   latent_dim_to = min(ncol(mat), nrow(mat) - 1),
   latent_dim_by = 1,
@@ -94,15 +94,15 @@ data(glaucoma_data)
 result <- GLaRe(
   mat = as.matrix(glaucoma_data),
   latent_dim_from = 1,
-  latent_dim_to = 50,
+  latent_dim_to = 3,
   learn = "pca",
-  kf = 5,
+  kf = 2,
   tolerance_level = 0.05,
   attainment_rate = 0.95,
-  verbose = TRUE
+  verbose = FALSE
 )
 
 }
 \seealso{
-\code{\link{summary_correlation_plot}}, \code{\link{plot_train_validation_ratio}}
+\code{\link{plot_train_validation_ratio}}
 }

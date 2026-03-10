@@ -1,4 +1,4 @@
-library(GLarE)
+library(GLaRe)
 
 # Set Random Seed: --------------------------------------------------------
 tensorflow::set_random_seed(seed = 1996)
@@ -11,7 +11,6 @@ glaucoma_pca <- GLaRe(
   mat = glaucoma,
   learn = "pca",
   kf = 5,
-  sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
   cvqlines = 0.9,
   attainment_rate = 0.95,
   tolerance_level = 0.05,

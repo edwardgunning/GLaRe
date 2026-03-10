@@ -45,7 +45,7 @@ summary_correlation_plot <- function(out_basisel, cvqlines, attainment_rate, r, 
     abline(v = qd, lty = 2, col = "grey")
     abline(h = tolerance_level, lty = 2, col = "grey")
     axis(side = 1, at = c(qd), labels = paste0("qd = ", qd), col = "darkgrey", font = 4, lwd = 3, padj = 1.2)
-    axis(side = 2, at = c(tolerance_level), labels = paste0("ε = ", tolerance_level), col = "darkgrey", font = 4, lwd = 3, padj = 1.2)
+    axis(side = 2, at = c(tolerance_level), labels = bquote(epsilon ~ "=" ~ .(tolerance_level)), col = "darkgrey", font = 4, lwd = 3, padj = 1.2)
   }
 
 
@@ -129,18 +129,18 @@ summary_correlation_plot <- function(out_basisel, cvqlines, attainment_rate, r, 
 #' result <- GLaRe(
 #'   mat = as.matrix(glaucoma_data),
 #'   latent_dim_from = 1,
-#'   latent_dim_to = 50,
+#'   latent_dim_to = 3,
 #'   learn = "pca",
-#'   kf = 5,
+#'   kf = 2,
 #'   tolerance_level = 0.05,
 #'   attainment_rate = 0.95,
-#'   verbose = TRUE
+#'   verbose = FALSE
 #' )
 #'
-#' @seealso \code{\link{summary_correlation_plot}}, \code{\link{plot_train_validation_ratio}}
+#' @seealso \code{\link{plot_train_validation_ratio}}
 
 GLaRe <- function(
-  mat = as.matrix(glaucoma_data),
+  mat,
   latent_dim_from = 1,
   latent_dim_to = min(ncol(mat), nrow(mat) - 1),
   latent_dim_by = 1,
