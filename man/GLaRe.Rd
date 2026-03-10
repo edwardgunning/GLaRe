@@ -15,7 +15,7 @@ GLaRe(
   cvqlines = 0.9,
   ae_args = list(),
   tolerance_level = 0.05,
-  cutoff_criterion = 0.95,
+  attainment_rate = 0.95,
   learn_function = NULL,
   verbose = TRUE
 )
@@ -63,7 +63,7 @@ loss distribution to display on the scree plot. Defaults to 0.9.}
 \item{tolerance_level}{A numeric value specifying the maximum allowable loss for a specified quantile
 of observations. Defaults to 0.05.}
 
-\item{cutoff_criterion}{A numeric value (between 0 and 1) defining the quantile of observations for
+\item{attainment_rate}{A numeric value (between 0 and 1) defining the quantile of observations for
 which the tolerance level must be met. Defaults to 0.95.}
 
 \item{learn_function}{A custom function for encoding and decoding, required if `learn = "user"`.
@@ -98,7 +98,7 @@ result <- GLaRe(
   learn = "pca",
   kf = 5,
   tolerance_level = 0.05,
-  cutoff_criterion = 0.95,
+  attainment_rate = 0.95,
   verbose = TRUE
 )
 

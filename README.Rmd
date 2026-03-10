@@ -40,7 +40,7 @@ library(GLaRe)
 
 Set random seed for both shuffling folds and stochastic optimisation of the autoencoder model.
 
-```{r seed}
+```{r seed, eval = FALSE}
 tensorflow::set_random_seed(1996)
 ```
 
@@ -69,7 +69,7 @@ ph_pca <- GLaRe(
   learn = "pca",
   kf = 5,
   cvqlines = 0.9,
-  cutoff_criterion = 0.95,
+  attainment_rate = 0.95,
   tolerance_level = 0.05,
   latent_dim_by = 10,
   latent_dim_to = ncol(PH),
@@ -82,7 +82,7 @@ ph_pca <- GLaRe(
 #   learn = "ae",
 #   kf = 5,
 #   cvqlines = 0.9,
-#   cutoff_criterion = 0.95,
+#   attainment_rate = 0.95,
 #   tolerance_level = 0.05,
 #   latent_dim_by = 10,
 #   latent_dim_to = ncol(PH),
@@ -96,7 +96,7 @@ ph_dwt <- GLaRe(
   learn = "dwt",
   kf = 5,
   cvqlines = 0.9,
-  cutoff_criterion = 0.95,
+  attainment_rate = 0.95,
   tolerance_level = 0.05,
   latent_dim_by = 10,
   latent_dim_to = ncol(PH),
@@ -137,7 +137,7 @@ DTI_pca <- GLaRe(
   learn = "pca",
   kf = 5,
   cvqlines = 0.9,
-  cutoff_criterion = 0.95,
+  attainment_rate = 0.95,
   tolerance_level = 0.05,
   latent_dim_by = 8,
   latent_dim_to = nrow(DTI),
@@ -149,7 +149,7 @@ DTI_pca <- GLaRe(
 #   learn = "ae",
 #   kf = 5,
 #   cvqlines = 0.9,
-#   cutoff_criterion = 0.95,
+#   attainment_rate = 0.95,
 #   tolerance_level = 0.05,
 #   latent_dim_by = 8,
 #   latent_dim_to = nrow(DTI),
@@ -162,7 +162,7 @@ DTI_dwt <- GLaRe(
   learn = "dwt",
   kf = 5,
   cvqlines = 0.9,
-  cutoff_criterion = 0.95,
+  attainment_rate = 0.95,
   tolerance_level = 0.05,
   latent_dim_by = 8,
   latent_dim_to = nrow(DTI),
@@ -204,7 +204,7 @@ glaucoma_pca <- GLaRe(
   learn = "pca",
   kf = 5,
   cvqlines = 0.9,
-  cutoff_criterion = 0.95,
+  attainment_rate = 0.95,
   tolerance_level = 0.05,
   latent_dim_by = 20,
   latent_dim_to = 500
@@ -216,7 +216,7 @@ glaucoma_dwt.2d <- GLaRe(
   learn = "dwt.2d",
   kf = 5,
   cvqlines = 0.9,
-  cutoff_criterion = 0.95,
+  attainment_rate = 0.95,
   tolerance_level = 0.05,
   latent_dim_by = 20,
   latent_dim_to = 500
@@ -227,7 +227,7 @@ glaucoma_dwt.2d <- GLaRe(
 #   learn = "ae",
 #   kf = 5,
 #   cvqlines = 0.9,
-#   cutoff_criterion = 0.95,
+#   attainment_rate = 0.95,
 #   tolerance_level = 0.05,
 #   latent_dim_by = 20,
 #   latent_dim_to = 500,
@@ -268,7 +268,7 @@ mnist_pca <- GLaRe(
   learn = "pca",
   kf = 5,
   cvqlines = 0.9,
-  cutoff_criterion = 0.95,
+  attainment_rate = 0.95,
   tolerance_level = 0.05,
   latent_dim_by = 20,
   latent_dim_to = 500
@@ -279,7 +279,7 @@ mnist_dwt.2d <- GLaRe(
   learn = "dwt.2d",
   kf = 5,
   cvqlines = 0.9,
-  cutoff_criterion = 0.95,
+  attainment_rate = 0.95,
   tolerance_level = 0.05,
   latent_dim_by = 20,
   latent_dim_to = 500
@@ -290,7 +290,7 @@ mnist_dwt.2d <- GLaRe(
 #   learn = "ae",
 #   kf = 5,
 #   cvqlines = 0.9,
-#   cutoff_criterion = 0.95,
+#   attainment_rate = 0.95,
 #   tolerance_level = 0.05,
 #   latent_dim_by = 20,
 #   latent_dim_to = 500,

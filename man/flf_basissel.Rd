@@ -67,11 +67,11 @@ library(GLaRe)
 
 # Generate structured data with correlated variables
 set.seed(123)
-n <- 100  # Number of observations
-p <- 10   # Number of variables
+n <- 100 # Number of observations
+p <- 10 # Number of variables
 
 # Create a dataset with latent structure
-latent_factors <- matrix(rnorm(n * 3), nrow = n, ncol = 3)  # 3 latent factors
+latent_factors <- matrix(rnorm(n * 3), nrow = n, ncol = 3) # 3 latent factors
 loadings <- matrix(runif(3 * p, min = 0.5, max = 1.5), nrow = 3, ncol = p)
 noise <- matrix(rnorm(n * p, sd = 0.1), nrow = n, ncol = p)
 

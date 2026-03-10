@@ -19,7 +19,7 @@ mnist_dwt.2d <- GLaRe(mat = x_train,
                       kf = 5,
                       sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
                       cvqlines = 0.5,
-                      cutoff_criterion = 0.95,
+                      attainment_rate = 0.95,
                       tolerance_level = 0.05,
                       verbose = TRUE)
 
@@ -31,7 +31,7 @@ mnist_pca <- GLaRe(mat = x_train_flattened,
                 kf = 5,
                 sqcorrel = c("trainmean", "cvmean", "cvmin", "cvmax"),
                 cvqlines = 0.5,
-                cutoff_criterion = 0.95,
+                attainment_rate = 0.95,
                 tolerance_level = 0.05,
                 verbose = TRUE)
 saveRDS(object = mnist_pca, file = "demos/mnist_pca.rds")

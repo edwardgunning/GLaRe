@@ -14,8 +14,8 @@ Description: Implements methods for assessing the losslessness of latent feature
     The package provides tools for computing losslessness measures and for visualizing
     results through graphical displays, including an interactive Shiny-based interface.
 License: MIT + file LICENSE
-Encoding: UTF-8
 LazyData: true
+LazyDataCompression: xz
 Depends:
     R (>= 2.10)
 Imports:

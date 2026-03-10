@@ -44,7 +44,9 @@ loadings <- matrix(rnorm(p * k), nrow = p, ncol = k) # Loadings matrix
 scores <- matrix(rnorm(n * k), nrow = n, ncol = k) # Factor scores
 Y <- scores \%*\% t(loadings) + matrix(rnorm(n * p, mean = 0, sd = 0.1), nrow = n, ncol = p)
 # Train autoencoder
+\dontrun{
 ae_model <- learn_ae(Y, k = 5, ae_args = list(epochs = 50, layer_1_dim = 100, link_fun = "linear"))
 encoded_data <- ae_model$Encode(Y)
 reconstructed_data <- ae_model$Decode(encoded_data)
+}
 }

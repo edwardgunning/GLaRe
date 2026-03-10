@@ -73,12 +73,12 @@ flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_di
   # add arguments check(s).
   if (learn == "user" & is.null(learn_function)) stop("learn_function must be supplied if learn = 'user'.")
   if (learn == "user") {
-    if (class(learn_function) != "function") stop("learn_function() must be a function.")
+    if (!is.function(learn_function)) stop("learn_function() must be a function.")
   }
 
   # Data matrix and its dimensions. -----------------------------------------
   if (learn == "dwt.2d") {
-    if (!(class(mat) == "array" & length(dim(mat)) == 3)) {
+    if (!(is.array(mat) & length(dim(mat)) == 3)) {
       stop("When learn = 'dwt.2d', mat must be a 3-dimensional array, where each slice is an image.")
     }
     arr <- mat

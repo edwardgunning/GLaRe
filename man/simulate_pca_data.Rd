@@ -27,11 +27,3 @@ This function generates structured data by simulating latent factors and loading
 from a PCA model, optionally adding Gaussian noise. The resulting data can be used
 to test dimensionality reduction and latent representation methods.
 }
-\examples{
-# Simulate data with 100 observations, 10 features, and 3 latent components
-data <- simulate_pca_data(n = 100, p = 10, k = 3, noise_sd = 0.1, seed = 42)
-
-# Plot the first two features
-plot(data[, 1], data[, 2], main = "Scatterplot of First Two Features")
-
-}

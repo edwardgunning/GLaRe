@@ -18,6 +18,3 @@ Numeric value representing 1 - squared correlation.
 Calculates 1 minus the squared correlation between observed and predicted values.
 If `predicted` values are constant, the squared correlation is set to 0.
 }
-\examples{
-get_one_minus_squared_correlation(c(1, 2, 3), c(1, 2, 2))
-}

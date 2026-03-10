@@ -1,4 +1,4 @@
-transform_correlation_output <- function(out_basissel, cvqlines, cutoff_criterion) {
+transform_correlation_output <- function(out_basissel, cvqlines, attainment_rate) {
   if (!(cvqlines >= 0 & cvqlines <= 1)) stop("cvqlines must be in [0, 1]")
   if (!(is.list(out_basissel))) stop("out_basissel must be the named list output")
   if (!all(c("corM_t", "rho_v") %in% names(out_basissel))) stop("out_basissel object must contain elements corM_t and rho_v")
@@ -9,13 +9,13 @@ transform_correlation_output <- function(out_basissel, cvqlines, cutoff_criterio
     maxsqcor_cv = apply(out_basissel[["rho_v"]], 2, max),
     medsqcor_cv = apply(out_basissel[["rho_v"]], 2, function(x) quantile(x, 0.5, na.rm = TRUE)),
     qchoice_cv = apply(out_basissel[["rho_v"]], 2, function(x) quantile(x, cvqlines, na.rm = TRUE)),
-    cutoff_criterion_cv = apply(out_basissel[["rho_v"]], 2, function(x) quantile(x, cutoff_criterion, na.rm = TRUE))
+    attainment_rate_cv = apply(out_basissel[["rho_v"]], 2, function(x) quantile(x, attainment_rate, na.rm = TRUE))
   )
   cor_df
 }
 
-summary_correlation_plot <- function(out_basisel, cvqlines, cutoff_criterion, r, q, breaks, method_name, qd, tolerance_level) {
-  correlation_df <- transform_correlation_output(out_basisel, cvqlines, cutoff_criterion)
+summary_correlation_plot <- function(out_basisel, cvqlines, attainment_rate, r, q, breaks, method_name, qd, tolerance_level) {
+  correlation_df <- transform_correlation_output(out_basisel, cvqlines, attainment_rate)
   plot(
     x = breaks,
     y = correlation_df[, "meansqcor_t"],
@@ -39,7 +39,7 @@ summary_correlation_plot <- function(out_basisel, cvqlines, cutoff_criterion, r,
   } else if (cvqlines != 0.5) {
     lines(x = breaks[seq_len(r)], correlation_df[seq_len(r), "qchoice_cv"], col = "purple", lwd = 2, type = "b", pch = 20)
   }
-  lines(x = breaks[seq_len(r)], correlation_df[seq_len(r), "cutoff_criterion_cv"], col = "grey", lwd = 2, lty = 2, type = "b", pch = 20)
+  lines(x = breaks[seq_len(r)], correlation_df[seq_len(r), "attainment_rate_cv"], col = "grey", lwd = 2, lty = 2, type = "b", pch = 20)
 
   if (!is.na(qd)) {
     abline(v = qd, lty = 2, col = "grey")
@@ -56,7 +56,7 @@ summary_correlation_plot <- function(out_basisel, cvqlines, cutoff_criterion, r,
       paste("CV Percentile =", cvqlines, "Loss"),
       "CV Max Loss",
       "Training Mean Loss",
-      paste("Cut-Off Criterion = ", cutoff_criterion, "Loss")
+      paste("Cut-Off Criterion = ", attainment_rate, "Loss")
     ),
     col = c("blue", "goldenrod", "purple", "red3", "green", "grey"),
     lty = c(1, 1, 1, 1, 1, 2),
@@ -106,7 +106,7 @@ summary_correlation_plot <- function(out_basisel, cvqlines, cutoff_criterion, r,
 #'        }
 #' @param tolerance_level A numeric value specifying the maximum allowable loss for a specified quantile
 #'        of observations. Defaults to 0.05.
-#' @param cutoff_criterion A numeric value (between 0 and 1) defining the quantile of observations for
+#' @param attainment_rate A numeric value (between 0 and 1) defining the quantile of observations for
 #'        which the tolerance level must be met. Defaults to 0.95.
 #' @param learn_function A custom function for encoding and decoding, required if `learn = "user"`.
 #'        The function must take arguments `Y` (data matrix) and `k` (latent dimension) and return a
@@ -133,7 +133,7 @@ summary_correlation_plot <- function(out_basisel, cvqlines, cutoff_criterion, r,
 #'   learn = "pca",
 #'   kf = 5,
 #'   tolerance_level = 0.05,
-#'   cutoff_criterion = 0.95,
+#'   attainment_rate = 0.95,
 #'   verbose = TRUE
 #' )
 #'
@@ -150,7 +150,7 @@ GLaRe <- function(
   cvqlines = 0.9,
   ae_args = list(),
   tolerance_level = 0.05,
-  cutoff_criterion = 0.95,
+  attainment_rate = 0.95,
   learn_function = NULL,
   verbose = TRUE
 ) {
@@ -166,12 +166,12 @@ GLaRe <- function(
   breaks <- out[["breaks"]]
 
   # Qualifying Criterion and Add to plot: -----------------------------------
-  cutoff_criterion_quantiles <- apply(out[["rho_v"]][, seq_len(r), drop = FALSE], 2, function(x) quantile(x, cutoff_criterion, na.rm = TRUE))
-  if (!any(cutoff_criterion_quantiles <= tolerance_level)) {
+  attainment_rate_quantiles <- apply(out[["rho_v"]][, seq_len(r), drop = FALSE], 2, function(x) quantile(x, attainment_rate, na.rm = TRUE))
+  if (!any(attainment_rate_quantiles <= tolerance_level)) {
     warning("No qualifying criterion found, try adjusting parameters.")
     qd <- NA
   } else {
-    index <- min(which(cutoff_criterion_quantiles <= tolerance_level))
+    index <- min(which(attainment_rate_quantiles <= tolerance_level))
     qd <- breaks[index]
   }
 
@@ -179,7 +179,7 @@ GLaRe <- function(
   summary_correlation_plot(
     out_basisel = out,
     cvqlines = cvqlines,
-    cutoff_criterion = cutoff_criterion,
+    attainment_rate = attainment_rate,
     r = r,
     q = q,
     breaks = breaks,

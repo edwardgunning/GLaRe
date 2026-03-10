@@ -104,7 +104,7 @@ idwt.2d_array <- function(D, ppad, ppad_left, ppad_right, qpad, qpad_left, qpad_
 #' Energy-based thresholding is then applied to retain the `k` most significant coefficients for encoding.
 #' Reconstruction is performed using the inverse 2-D DWT.
 #'
-#' @examples
+#'
 #' @importFrom waveslim dwt.2d idwt.2d
 #' @export
 learn_dwt.2d <- function(Y, p1, p2) {

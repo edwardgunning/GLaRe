@@ -6,8 +6,6 @@
 #' @param observed Numeric vector of observed values.
 #' @param predicted Numeric vector of predicted values.
 #' @return Numeric value representing 1 - squared correlation.
-#' @examples
-#' get_one_minus_squared_correlation(c(1, 2, 3), c(1, 2, 2))
 get_one_minus_squared_correlation <- function(observed, predicted) {
   # Handle case where predicted values are constant
   if (length(unique(predicted)) == 1) {
@@ -25,9 +23,7 @@ get_one_minus_squared_correlation <- function(observed, predicted) {
 #' @param x Numeric vector to repeat.
 #' @param n Integer specifying the number of repetitions.
 #' @return A matrix where `x` is repeated `n` times as columns.
-#' @examples
-#' rep.col(c(1, 2, 3), 3)
-rep.col <- function(x, n) {
+rep_col <- function(x, n) {
   # Repeat x into a matrix with n columns
   matrix(rep(x, each = n), ncol = n, byrow = TRUE)
 }
@@ -107,7 +103,7 @@ plot_eye <- function(y) {
     ggplot2::coord_radial(inner.radius = 9 / 24, expand = FALSE) +
     ggplot2::geom_tile(mapping = ggplot2::aes(fill = y)) +
     ggplot2::scale_fill_gradientn(colours = rainbow(8), limits = c(-0.352333, 2.020408), oob = scales::squish) +
-    ggplot2::labs(fill = expression(X[i](theta, phi)), x = expression(theta), y = expression(phi))
+    ggplot2::labs(fill = expression(X[i](.data$theta, .data$phi)), x = expression(theta), y = expression(phi))
 }
 
 #' Plot a Single MNIST Image
@@ -277,14 +273,6 @@ plot_gel_reconstruction <- function(GLaRe_output, y) {
 #' @param seed An optional integer for setting the random seed to ensure reproducibility.
 #'             Defaults to NULL.
 #' @return A numeric matrix of dimensions `n` x `p` containing the simulated data.
-#' @examples
-#' # Simulate data with 100 observations, 10 features, and 3 latent components
-#' data <- simulate_pca_data(n = 100, p = 10, k = 3, noise_sd = 0.1, seed = 42)
-#'
-#' # Plot the first two features
-#' plot(data[, 1], data[, 2], main = "Scatterplot of First Two Features")
-#'
-#' @export
 simulate_pca_data <- function(n, p, k, noise_sd = 0.1, seed = NULL) {
   if (!is.null(seed)) set.seed(seed)
 
