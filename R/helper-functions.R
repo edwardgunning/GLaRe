@@ -99,11 +99,11 @@ plot_eye <- function(y) {
 
   # Create radial plot
   ggplot2::ggplot(data = plot_df) +
-    ggplot2::aes(x = theta, y = phi) +
+    ggplot2::aes(x = .data$theta, y = .data$phi) +
     ggplot2::coord_radial(inner.radius = 9 / 24, expand = FALSE) +
     ggplot2::geom_tile(mapping = ggplot2::aes(fill = y)) +
     ggplot2::scale_fill_gradientn(colours = rainbow(8), limits = c(-0.352333, 2.020408), oob = scales::squish) +
-    ggplot2::labs(fill = expression(X[i](.data$theta, .data$phi)), x = expression(theta), y = expression(phi))
+    ggplot2::labs(fill = expression(X[i](theta, phi)), x = expression(theta), y = expression(phi))
 }
 
 #' Plot a Single MNIST Image
