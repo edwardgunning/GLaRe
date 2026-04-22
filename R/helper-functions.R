@@ -430,7 +430,7 @@ generate_heatmap_of_K <- function(
       ggplot2::scale_y_continuous(expand = c(0, 0)) +
       ggplot2::scale_fill_viridis_c(
         na.value = "grey90",
-        name = "Qualifying\nK"
+        name = "QD (K)"
       ) +
       ggplot2::labs(
         x = expression("Tolerance level " * epsilon),
