@@ -425,7 +425,7 @@ generate_heatmap_of_K <- function(
         fill = K
       )
     ) +
-      ggplot2::geom_tile(color = "white", linewidth = 0.2) +
+      ggplot2::geom_tile() +
       ggplot2::scale_x_reverse() +
       ggplot2::scale_y_continuous(expand = c(0, 0)) +
       ggplot2::scale_fill_viridis_c(
