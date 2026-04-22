@@ -9,7 +9,8 @@ generate_heatmap_of_K(
   attainment_grid = seq(0.75, 0.99, by = 0.01),
   tolerance_grid = seq(0.2, 0.01, by = -0.01),
   sorted_loss_vec,
-  breaks
+  breaks,
+  interactive = FALSE
 )
 }
 \arguments{
@@ -26,6 +27,9 @@ of \eqn{K}.}
 \item{breaks}{A numeric vector giving the latent dimension \eqn{K}
 corresponding to each column of \code{sorted_loss_vec}. Must have length
 equal to \code{ncol(sorted_loss_vec)}.}
+
+\item{interactive}{Logical value indicating whether an interactive (plot_ly)
+plot should be returned or a static (ggplot).}
 }
 \value{
 A \code{plotly} heatmap object showing the qualifying latent

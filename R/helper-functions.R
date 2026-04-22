@@ -288,8 +288,6 @@ simulate_pca_data <- function(n, p, k, noise_sd = 0.1, seed = NULL) {
 }
 
 
-
-
 #' Generate a heatmap of the qualifying latent dimension over an
 #' \eqn{(\epsilon, \alpha)} grid
 #'
@@ -314,6 +312,9 @@ simulate_pca_data <- function(n, p, k, noise_sd = 0.1, seed = NULL) {
 #'   corresponding to each column of \code{sorted_loss_vec}. Must have length
 #'   equal to \code{ncol(sorted_loss_vec)}.
 #'
+#' @param interactive Logical value indicating whether an interactive (plot_ly)
+#' plot should be returned or a static (ggplot).
+#'
 #' @return A \code{plotly} heatmap object showing the qualifying latent
 #'   dimension over the \eqn{(\epsilon, \alpha)} grid.
 #'
@@ -331,10 +332,11 @@ simulate_pca_data <- function(n, p, k, noise_sd = 0.1, seed = NULL) {
 #'
 #' @export
 generate_heatmap_of_K <- function(
-    attainment_grid = seq(0.75, 0.99, by = 0.01),
-    tolerance_grid = seq(0.20, 0.01, by = -0.01),
-    sorted_loss_vec,
-    breaks
+  attainment_grid = seq(0.75, 0.99, by = 0.01),
+  tolerance_grid = seq(0.20, 0.01, by = -0.01),
+  sorted_loss_vec,
+  breaks,
+  interactive = FALSE
 ) {
   if (!is.matrix(sorted_loss_vec)) {
     stop("sorted_loss_vec must be a matrix.")
@@ -352,9 +354,15 @@ generate_heatmap_of_K <- function(
     stop("attainment_grid values must be in [0, 1].")
   }
 
+  if (!is.logical(interactive)) {
+    stop("interactive must be TRUE or FALSE")
+  }
+
   # NA columns behaiours:
-  if(any(is.na(sorted_loss_vec))) {
-    na_cols <- which(apply(sorted_loss_vec, 2, function(x) {any(is.na(x))}))
+  if (any(is.na(sorted_loss_vec))) {
+    na_cols <- which(apply(sorted_loss_vec, 2, function(x) {
+      any(is.na(x))
+    }))
     sorted_loss_vec <- sorted_loss_vec[, -na_cols]
     breaks <- breaks[-na_cols]
   }
@@ -388,17 +396,56 @@ generate_heatmap_of_K <- function(
     }
   }
 
-  p <- plotly::plot_ly(
-    x = tolerance_grid,
-    y = attainment_grid,
-    z = heat_map_K,
-    type = "heatmap"
-  )
-  heat_map <- plotly::layout(p,
-                             xaxis = list(title = "Tolerance Level"),
-                             yaxis = list(title = "Attainment Rate")
-  )
+  if (interactive) {
+    # Use plot_ly
+    p <- plotly::plot_ly(
+      x = tolerance_grid,
+      y = attainment_grid,
+      z = heat_map_K,
+      type = "heatmap"
+    )
+    heat_map <- plotly::layout(p,
+      xaxis = list(title = "Tolerance Level"),
+      yaxis = list(title = "Attainment Rate")
+    )
 
-  return(heat_map)
+    return(heat_map)
+  } else if (!interactive) {
+    # Use ggplot
+    heat_map_df <- expand.grid(
+      attainment_rate = attainment_grid,
+      tolerance_level = tolerance_grid
+    )
+    heat_map_df$K <- as.vector(heat_map_K)
+
+    ggplot2::ggplot(
+      heat_map_df,
+      ggplot2::aes(
+        x = tolerance_level,
+        y = attainment_rate,
+        fill = K
+      )
+    ) +
+      ggplot2::geom_tile(color = "white", linewidth = 0.2) +
+      ggplot2::scale_x_reverse() +
+      ggplot2::scale_y_continuous(expand = c(0, 0)) +
+      ggplot2::scale_fill_viridis_c(
+        na.value = "grey90",
+        name = "Qualifying\nK"
+      ) +
+      ggplot2::labs(
+        x = expression("Tolerance level " * epsilon),
+        y = expression("Attainment rate " * alpha),
+        title = title
+      ) +
+      ggplot2::theme_minimal(base_size = 13) +
+      ggplot2::theme(
+        panel.grid = ggplot2::element_blank(),
+        axis.title = ggplot2::element_text(size = 14),
+        axis.text = ggplot2::element_text(size = 11),
+        legend.title = ggplot2::element_text(size = 12),
+        legend.text = ggplot2::element_text(size = 11),
+        plot.title = ggplot2::element_text(hjust = 0.5, face = "bold")
+      )
+  }
 }
-
