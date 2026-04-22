@@ -22,9 +22,9 @@
 #' @param verbose A logical value indicating whether progress messages should be printed. Default is `TRUE`.
 #'
 #' @return A list containing:
-#'   - `corM_t`: Training loss values for each latent dimension.
+#'   - `corM_t`: Training (in-sample) loss values for each latent dimension.
 #'   - `corM_v`: Cross-validation loss values for each latent dimension.
-#'   - `rho_v`: Observation-wise loss values for each fold and latent dimension.
+#'   - `rho_v`: Observation-wise cross-validated loss values for each fold and latent dimension.
 #'   - `Qrho_v`: Sorted version of `rho_v` for heatmap visualization.
 #'   - `breaks`: The evaluated latent dimensions.
 #'   - `n`: Number of observations in the input data matrix.
@@ -179,8 +179,8 @@ flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_di
   proj_v <- array(NA, c(n, p, q)) # to store the cross-validation predictions
   rho_v <- array(NA, c(n, q)) # to store the individual observations correlations between cross-validation predictions and data for each latent dimension
   Qrho_v <- array(NA, c(n, q)) # version of `rho_v` with it's rows sorted separately for each column (for heatmap)
-  PRESS <- corM_v <- vector(mode = "numeric", length = q) # overall/ total correlations/ residual sum of squares between cross-validation predictions and data for each latent dimension
-  PRESS[1:q] <- corM_v[1:q] <- NA
+  corM_v <- vector(mode = "numeric", length = q) # overall/ total correlations/ residual sum of squares between cross-validation predictions and data for each latent dimension
+  corM_v[1:q] <- NA
 
   # shuffle data prior to cross-validation.
   shuffle_inds <- sample(n)
@@ -221,7 +221,6 @@ flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_di
   ## Overall Measures  ------------------------------------------------------
   for (j in seq_len(r)) {
     corM_v[j] <- loss_function(observed = c(mat), predicted = c(proj_v[, , j]))
-    PRESS[j] <- norm(as.matrix(proj_v[, , j] - mat), type = "F")^2
   }
 
   ## Individual-Level Measures ----------------------------------------------

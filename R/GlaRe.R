@@ -111,6 +111,8 @@ summary_correlation_plot <- function(out_basisel, cvqlines, attainment_rate, r, 
 #' @param learn_function A custom function for encoding and decoding, required if `learn = "user"`.
 #'        The function must take arguments `Y` (data matrix) and `k` (latent dimension) and return a
 #'        list containing `Encode` and `Decode` functions.
+#' @param loss_function A function to compute the loss between the original and reconstructed data. Default is `get_one_minus_squared_correlation`.
+#'        Passed to \code{flf_basissel()}.
 #' @param verbose Logical; if `TRUE`, progress messages are printed during training and evaluation.
 #'        Defaults to `TRUE`.
 #'
@@ -152,6 +154,7 @@ GLaRe <- function(
   tolerance_level = 0.05,
   attainment_rate = 0.95,
   learn_function = NULL,
+  loss_function = get_one_minus_squared_correlation,
   verbose = TRUE
 ) {
   # start:
@@ -159,7 +162,7 @@ GLaRe <- function(
     print(paste("*** Learning Method:", learn, "***"))
   }
   # apply training and cross validation for basis selection:
-  out <- flf_basissel(mat = mat, learn = learn, kf = kf, latent_dim_from = latent_dim_from, latent_dim_to = latent_dim_to, latent_dim_by = latent_dim_by, ae_args = ae_args, learn_function = learn_function, verbose = verbose)
+  out <- flf_basissel(mat = mat, learn = learn, kf = kf, latent_dim_from = latent_dim_from, latent_dim_to = latent_dim_to, latent_dim_by = latent_dim_by, ae_args = ae_args, learn_function = learn_function, loss_function = loss_function,  verbose = verbose)
   n <- out[["n"]]
   q <- out[["q"]]
   r <- out[["r"]]
