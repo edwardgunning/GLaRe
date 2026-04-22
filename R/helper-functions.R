@@ -286,3 +286,119 @@ simulate_pca_data <- function(n, p, k, noise_sd = 0.1, seed = NULL) {
 
   return(data)
 }
+
+
+
+
+#' Generate a heatmap of the qualifying latent dimension over an
+#' \eqn{(\epsilon, \alpha)} grid
+#'
+#' For each combination of tolerance level \eqn{\epsilon} and attainment rate
+#' \eqn{\alpha}, this function finds the smallest latent dimension \eqn{K} such
+#' that the empirical \eqn{\alpha}-quantile of the individual reconstruction
+#' losses is less than \eqn{\epsilon}.
+#'
+#' The input \code{sorted_loss_vec} is assumed to be a numeric matrix whose
+#' rows correspond to observations and whose columns correspond to candidate
+#' latent dimensions. The vector \code{breaks} maps each column of
+#' \code{sorted_loss_vec} to its corresponding latent dimension \eqn{K}.
+#'
+#' @param attainment_grid A numeric vector of attainment rates \eqn{\alpha}.
+#'   Defaults to \code{seq(0.75, 0.99, by = 0.01)}.
+#' @param tolerance_grid A numeric vector of tolerance levels \eqn{\epsilon}.
+#'   Defaults to \code{seq(0.20, 0.01, by = -0.01)}.
+#' @param sorted_loss_vec A numeric matrix of individual reconstruction losses.
+#'   Rows correspond to observations and columns correspond to candidate values
+#'   of \eqn{K}.
+#' @param breaks A numeric vector giving the latent dimension \eqn{K}
+#'   corresponding to each column of \code{sorted_loss_vec}. Must have length
+#'   equal to \code{ncol(sorted_loss_vec)}.
+#'
+#' @return A \code{plotly} heatmap object showing the qualifying latent
+#'   dimension over the \eqn{(\epsilon, \alpha)} grid.
+#'
+#' @examples
+#' set.seed(1)
+#' loss_mat <- matrix(runif(100 * 5, min = 0, max = 0.2), nrow = 100, ncol = 5)
+#' K_grid <- 1:5
+#'
+#' generate_heatmap_of_K(
+#'   attainment_grid = c(0.8, 0.9, 0.95),
+#'   tolerance_grid = c(0.15, 0.10, 0.05),
+#'   sorted_loss_vec = loss_mat,
+#'   breaks = K_grid
+#' )
+#'
+#' @export
+generate_heatmap_of_K <- function(
+    attainment_grid = seq(0.75, 0.99, by = 0.01),
+    tolerance_grid = seq(0.20, 0.01, by = -0.01),
+    sorted_loss_vec,
+    breaks
+) {
+  if (!is.matrix(sorted_loss_vec)) {
+    stop("sorted_loss_vec must be a matrix.")
+  }
+
+  if (!is.numeric(sorted_loss_vec)) {
+    stop("sorted_loss_vec must be a numeric matrix.")
+  }
+
+  if (length(breaks) != ncol(sorted_loss_vec)) {
+    stop("length(breaks) must equal ncol(sorted_loss_vec).")
+  }
+
+  if (!(min(attainment_grid) >= 0 & max(attainment_grid) <= 1)) {
+    stop("attainment_grid values must be in [0, 1].")
+  }
+
+  # NA columns behaiours:
+  if(any(is.na(sorted_loss_vec))) {
+    na_cols <- which(apply(sorted_loss_vec, 2, function(x) {any(is.na(x))}))
+    sorted_loss_vec <- sorted_loss_vec[, -na_cols]
+    breaks <- breaks[-na_cols]
+  }
+
+
+  heat_map_K <- matrix(
+    data = NA_real_,
+    nrow = length(attainment_grid),
+    ncol = length(tolerance_grid)
+  )
+
+  for (i in seq_along(attainment_grid)) {
+    # The attainment rate alpha
+    alpha <- attainment_grid[i]
+
+    # For this alpha, compute the columnwise empirical quantile across K
+    loss_quantiles <- apply(sorted_loss_vec, 2, quantile, probs = alpha)
+
+    for (j in seq_along(tolerance_grid)) {
+      # The tolerance level epsilon
+      eps <- tolerance_grid[j]
+
+      # Find the smallest K for which the criterion is attained
+      qualifying_inds <- which(loss_quantiles < eps)
+
+      if (length(qualifying_inds) == 0) {
+        heat_map_K[i, j] <- NA_real_
+      } else {
+        heat_map_K[i, j] <- breaks[min(qualifying_inds)]
+      }
+    }
+  }
+
+  p <- plotly::plot_ly(
+    x = tolerance_grid,
+    y = attainment_grid,
+    z = heat_map_K,
+    type = "heatmap"
+  )
+  heat_map <- plotly::layout(p,
+                             xaxis = list(title = "Tolerance Level"),
+                             yaxis = list(title = "Attainment Rate")
+  )
+
+  return(heat_map)
+}
+

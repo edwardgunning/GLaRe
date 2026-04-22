@@ -3,6 +3,7 @@
 export(GLaRe)
 export(distribution_plot)
 export(flf_basissel)
+export(generate_heatmap_of_K)
 export(learn_ae)
 export(learn_dwt)
 export(learn_dwt.2d)
