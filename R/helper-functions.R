@@ -409,7 +409,6 @@ generate_heatmap_of_K <- function(
       yaxis = list(title = "Attainment Rate")
     )
 
-    return(heat_map)
   } else if (!interactive) {
     # Use ggplot
     heat_map_df <- expand.grid(
@@ -418,7 +417,7 @@ generate_heatmap_of_K <- function(
     )
     heat_map_df$K <- as.vector(heat_map_K)
 
-    ggplot2::ggplot(
+    heat_map <- ggplot2::ggplot(
       heat_map_df,
       ggplot2::aes(
         x = tolerance_level,
@@ -448,4 +447,6 @@ generate_heatmap_of_K <- function(
         plot.title = ggplot2::element_text(hjust = 0.5, face = "bold")
       )
   }
+
+  heat_map
 }
