@@ -46,9 +46,9 @@ flf_basissel(
 }
 \value{
 A list containing:
-  - `corM_t`: Training loss values for each latent dimension.
+  - `corM_t`: Training (in-sample) loss values for each latent dimension.
   - `corM_v`: Cross-validation loss values for each latent dimension.
-  - `rho_v`: Observation-wise loss values for each fold and latent dimension.
+  - `rho_v`: Observation-wise cross-validated loss values for each fold and latent dimension.
   - `Qrho_v`: Sorted version of `rho_v` for heatmap visualization.
   - `breaks`: The evaluated latent dimensions.
   - `n`: Number of observations in the input data matrix.

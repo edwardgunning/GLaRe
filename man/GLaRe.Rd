@@ -17,6 +17,7 @@ GLaRe(
   tolerance_level = 0.05,
   attainment_rate = 0.95,
   learn_function = NULL,
+  loss_function = get_one_minus_squared_correlation,
   verbose = TRUE
 )
 }
@@ -69,6 +70,9 @@ which the tolerance level must be met. Defaults to 0.95.}
 \item{learn_function}{A custom function for encoding and decoding, required if `learn = "user"`.
 The function must take arguments `Y` (data matrix) and `k` (latent dimension) and return a
 list containing `Encode` and `Decode` functions.}
+
+\item{loss_function}{A function to compute the loss between the original and reconstructed data. Default is `get_one_minus_squared_correlation`.
+Passed to \code{flf_basissel()}.}
 
 \item{verbose}{Logical; if `TRUE`, progress messages are printed during training and evaluation.
 Defaults to `TRUE`.}

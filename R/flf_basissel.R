@@ -107,11 +107,16 @@ flf_basissel <- function(mat, learn, ae_args, kf, latent_dim_from = 1, latent_di
 
   # Set up feature learning function: ---------------------------------------
   if (learn == "pca") {
-    learn_function <- learn_pca
+    learn_function <- function(Y, k = NULL) {
+      learn_pca(Y)
+    }
+
   } else if (learn == "dwt") {
-    learn_function <- learn_dwt
+    learn_function <- function(Y, k = NULL) {
+      learn_dwt(Y)
+    }
   } else if (learn == "dwt.2d") {
-    learn_function <- function(Y) {
+    learn_function <- function(Y, k = NULL) {
       learn_dwt.2d(Y = Y, p1 = p1, p2 = p2)
     }
   } else if (learn == "ae") {
