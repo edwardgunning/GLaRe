@@ -434,7 +434,7 @@ generate_heatmap_of_K <- function(
       ) +
       ggplot2::labs(
         x = expression("Tolerance level " * epsilon),
-        y = expression("Attainment rate " * alpha)
+        y = expression("Attainment rate 1 -" * alpha)
       ) +
       ggplot2::theme_minimal(base_size = 13) +
       ggplot2::theme(
