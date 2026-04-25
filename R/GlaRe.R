@@ -14,7 +14,7 @@ transform_correlation_output <- function(out_basissel, cvqlines, attainment_rate
   cor_df
 }
 
-summary_correlation_plot <- function(out_basisel, cvqlines, attainment_rate, r, q, breaks, method_name, qd, tolerance_level, cex_legend = 1) {
+summary_correlation_plot <- function(out_basisel, cvqlines, attainment_rate, r, q, breaks, method_name, qd, tolerance_level, cex_legend = 1, show_legend = TRUE) {
   correlation_df <- transform_correlation_output(out_basisel, cvqlines, attainment_rate)
   plot(
     x = breaks,
@@ -48,22 +48,25 @@ summary_correlation_plot <- function(out_basisel, cvqlines, attainment_rate, r, 
     axis(side = 2, at = c(tolerance_level), labels = bquote(epsilon ~ "=" ~ .(tolerance_level)), col = "darkgrey", font = 4, lwd = 3, padj = 1.2)
   }
 
+  if(show_legend) {
+    legend("topright",
+           legend = c(
+             "CV Min Loss",
+             "CV Overall Loss",
+             paste("CV Percentile =", cvqlines, "Loss"),
+             "CV Max Loss",
+             "Training Overall Loss",
+             paste("Cut-Off Criterion = ", attainment_rate, "Loss")
+           ),
+           col = c("blue", "goldenrod", "purple", "red3", "green", "grey"),
+           lty = c(1, 1, 1, 1, 1, 2),
+           lwd = c(2, 2, 2, 2, 2, 2, 2),
+           bg = "white",
+           cex = cex_legend
+    )
+  }
 
-  legend("topright",
-    legend = c(
-      "CV Min Loss",
-      "CV Overall Loss",
-      paste("CV Percentile =", cvqlines, "Loss"),
-      "CV Max Loss",
-      "Training Overall Loss",
-      paste("Cut-Off Criterion = ", attainment_rate, "Loss")
-    ),
-    col = c("blue", "goldenrod", "purple", "red3", "green", "grey"),
-    lty = c(1, 1, 1, 1, 1, 2),
-    lwd = c(2, 2, 2, 2, 2, 2, 2),
-    bg = "white",
-    cex = cex_legend
-  )
+
 }
 
 
