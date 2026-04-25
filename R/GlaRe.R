@@ -193,28 +193,33 @@ GLaRe <- function(
 
 
   # Heatmap: ----------------------------------------------------------------
+  # some params for heatmap:
+  zmin <- 0
+  zmax <- 1
+  mid <- (tolerance_level - zmin) / (zmax - zmin)
+
+
   heat_map <- plotly::plot_ly(
     x = breaks,
     y = seq(0, 1, length.out = n),
-    z = log10(out$Qrho_v),
+    z = out$Qrho_v,
     type = "heatmap",
     colorscale = list(
-      list(0, "green"), # Start color (was red)
-      list(0.5, "yellow"), # Middle color
-      list(1, "red") # End color (was green)
+      list(0, "green"),
+      list(mid, "green"),
+      list(mid, "yellow"),
+      list(1, "red")
+    ),
+    colorbar = list(
+      title = "Loss",
+      tickvals = c(0, 0.05, 0.1, 0.2, 0.5, 1),
+      ticktext = c("0", "0.05", "0.1", "0.2", "0.5", "1")
     )
   ) %>%
     plotly::layout(
-      # title = "Squared Correlation Heatmap",
       xaxis = list(title = "No. of Latent Features"),
       yaxis = list(title = "Quantile of Observations"),
       legend = list(orientation = "h")
-    ) %>%
-    plotly::colorbar(
-      title = "Loss",
-      tickvals = log10(10^seq(0, -10, by = -1)),
-      ticktext = 10^seq(0, -10, by = -1),
-      side = "bottom"
     )
 
 
