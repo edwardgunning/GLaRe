@@ -14,7 +14,7 @@ transform_correlation_output <- function(out_basissel, cvqlines, attainment_rate
   cor_df
 }
 
-summary_correlation_plot <- function(out_basisel, cvqlines, attainment_rate, r, q, breaks, method_name, qd, tolerance_level) {
+summary_correlation_plot <- function(out_basisel, cvqlines, attainment_rate, r, q, breaks, method_name, qd, tolerance_level, cex_legend = 1) {
   correlation_df <- transform_correlation_output(out_basisel, cvqlines, attainment_rate)
   plot(
     x = breaks,
@@ -61,7 +61,8 @@ summary_correlation_plot <- function(out_basisel, cvqlines, attainment_rate, r, 
     col = c("blue", "goldenrod", "purple", "red3", "green", "grey"),
     lty = c(1, 1, 1, 1, 1, 2),
     lwd = c(2, 2, 2, 2, 2, 2, 2),
-    bg = "white"
+    bg = "white",
+    cex = cex_legend
   )
 }
 
