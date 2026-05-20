@@ -84,7 +84,7 @@ distribution_plot <- function(GLaRe_output, jitter = 0.2, cex = 1) {
 #' Visualizes glaucoma eye data as a 2D radial projection.
 #'
 #' @param y A 14400-dimensional numeric vector of measurements.
-#' @return A ggplot2 object visualizing the eye data.
+#' @return A ggplot2 object visualizing the eye data, where colours represent the objects value. A square root transformation is applied to the colour.
 #' @export
 plot_eye <- function(y) {
   # Validate input
@@ -102,7 +102,15 @@ plot_eye <- function(y) {
     ggplot2::aes(x = .data$theta, y = .data$phi) +
     ggplot2::coord_radial(inner.radius = 9 / 24, expand = FALSE) +
     ggplot2::geom_tile(mapping = ggplot2::aes(fill = y)) +
-    ggplot2::scale_fill_gradientn(colours = rainbow(8), limits = c(-0.352333, 2.020408), oob = scales::squish) +
+    ggplot2::scale_fill_gradientn(colours = rainbow(8),
+                                  limits = c(0, 1.2),
+                                  oob = scales::squish,
+                                  trans = scales::trans_new(
+                                    name = "cube_root",
+                                    transform = function(x) x^(1/3),
+                                    inverse = function(x) x^3,
+                                    domain = c(0, Inf)
+                                  )) +
     ggplot2::labs(fill = expression(X[i](theta, phi)), x = expression(theta), y = expression(phi))
 }
 

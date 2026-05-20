@@ -10,7 +10,7 @@ plot_eye(y)
 \item{y}{A 14400-dimensional numeric vector of measurements.}
 }
 \value{
-A ggplot2 object visualizing the eye data.
+A ggplot2 object visualizing the eye data, where colours represent the objects value. A square root transformation is applied to the colour.
 }
 \description{
 Visualizes glaucoma eye data as a 2D radial projection.
